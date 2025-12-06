@@ -1,8 +1,8 @@
 -- MSP Customer Portal Database Schema
 -- Run this file to create the database and tables
 
-CREATE DATABASE IF NOT EXISTS msp_portal;
-USE msp_portal;
+CREATE DATABASE IF NOT EXISTS mspguild;
+USE mspguild;
 
 -- Users table for customer authentication and information
 CREATE TABLE IF NOT EXISTS users (

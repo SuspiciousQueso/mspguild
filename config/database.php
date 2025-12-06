@@ -5,11 +5,14 @@
  */
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'msp_portal');
-define('DB_USER', 'root'); // Change for production
-define('DB_PASS', ''); // Change for production
+define('DB_NAME', 'mspguild');
+define('DB_USER', 'portal_user'); // Change for production
+define('DB_PASS', 'CHANGE_THIS_PASSWORD'); // Change for production
 define('DB_CHARSET', 'utf8mb4');
-
+define('SITE_NAME', 'MSP Guild');
+define('SITE_URL', 'https://mspguild.tech');
+define('SUPPORT_EMAIL', 'support@mspguild.tech');
+define('SUPPORT_PHONE', '409.263.1847');
 /**
  * Get database connection using PDO
  * @return PDO Database connection object
