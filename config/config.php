@@ -6,7 +6,7 @@
 // Site settings
 define('SITE_NAME', 'MSPGuild');
 define('SITE_TAGLINE', 'OnpenSource AiO MSP Client Support and Management Portal');
-define('SITE_URL', 'http://https://baldwinit.tech'); // Update for production
+define('SITE_URL', 'https://baldwinit.tech'); // Update for production
 define('SUPPORT_EMAIL', 'support@mspguild.com');
 define('SUPPORT_PHONE', '(555) 123-4567');
 
@@ -34,13 +34,13 @@ define('KNOWLEDGE_BASE_URL', '/dashboard?section=kb'); // Placeholder for knowle
 date_default_timezone_set('America/Los_Angeles'); // Update to your timezone
 
 // Error reporting (disable in production)
-if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1') {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-} else {
-    error_reporting(0);
-    ini_set('display_errors', 0);
-}
+//if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1') {
+//    error_reporting(E_ALL);
+//    ini_set('display_errors', 1);
+//} else {
+//    error_reporting(0);
+//   ini_set('display_errors', 0);
+//}
 
 // Session configuration
 ini_set('session.cookie_httponly', 1);
