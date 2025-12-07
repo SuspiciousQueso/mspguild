@@ -44,8 +44,12 @@ In short: MSPGuild gives technicians full, personal control over their entire su
 
 MSPGuild is designed to be run **in-house, on your own hardware**. This ensures maximum data security, control, and zero vendor lock-in.
 
-### Installation & Development
+### Installation & Deployment
 
-* *(This is where you would link to your setup instructions or documentation.)*
+To get started with MSPGuild, please follow the detailed guide:
+**[View the Full Installation and Configuration Guide here.](SETUP.md)**
     
+</details>
+    
+
 </details>
