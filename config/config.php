@@ -6,7 +6,7 @@
 // Site settings
 define('SITE_NAME', 'MSPGuild');
 define('SITE_TAGLINE', 'OnpenSource AiO MSP Client Support and Management Portal');
-define('SITE_URL', 'https://baldwinit.tech'); // Update for production
+define('SITE_URL', 'https://mspguild.tech'); // Update for production
 define('SUPPORT_EMAIL', 'support@mspguild.com');
 define('SUPPORT_PHONE', '(555) 123-4567');
 
