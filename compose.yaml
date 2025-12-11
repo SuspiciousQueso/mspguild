@@ -1,5 +1,3 @@
-version: "3.9"
-
 # ============================================================
 #  MSPGuild Stack
 #  - Traefik (reverse proxy + Let's Encrypt)
