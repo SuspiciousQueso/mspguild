@@ -89,6 +89,9 @@ services:
       - "traefik.http.routers.mspguild.rule=Host(`mspguild.tech`,`www.mspguild.tech`)"
       - "traefik.http.routers.mspguild.entrypoints=websecure"
 
+      # Point Traefik to the nginx service on port 80
+      - "traefik.http.services.mspguild.loadbalancer.server.port=80"
+
       # Use Let's Encrypt
       - "traefik.http.routers.mspguild.tls.certresolver=le"
       - "traefik.http.routers.mspguild.tls=true"

@@ -1,4 +1,9 @@
 <?php
+// Start session FIRST, before any output or includes that might output
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../includes/auth.php';
+startSecureSession();
+
 $pageTitle = 'Home';
 require_once __DIR__ . '/../includes/header.php';
 ?>
