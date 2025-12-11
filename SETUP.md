@@ -93,6 +93,17 @@ This workflow is for deploying on your remote Ubuntu VPS.
 
 1.  **Preparation:** SSH into your VPS and ensure Git and Docker are installed.
 2.  **Clone & Configure:** Repeat **Steps 1 & 2** from the Local Setup, but ensure your **`.env`** file uses **strong, production passwords** and the final public domain name for `SITE_URL`.
+3.  **DNS / A record (IMPORTANT):**
+    - Ensure your domain `mspguild.tech` (and `www.mspguild.tech`) have A records pointing to your VPS public IP:
+      - `mspguild.tech A 209.46.125.97`
+      - `www.mspguild.tech A 209.46.125.97`
+    - Allow time for DNS propagation (a few minutes to a few hours depending on TTL).
+    - Verify from a remote machine:
+      ```bash
+      dig +short mspguild.tech @8.8.8.8
+      dig +short www.mspguild.tech @8.8.8.8
+      ```
+    - If the records do not return `209.46.125.97`, update them at your DNS provider before proceeding.
 3.  **Launch Containers:**
     ```bash
     docker-compose up -d --build
