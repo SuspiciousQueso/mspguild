@@ -107,8 +107,9 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
 
-    volumes:
-      - ./public:/var/www/mspguild/public:delegated
+      volumes:
+        # Mount the full project into PHP so it can include files outside `public`
+        - ./:/var/www/mspguild:delegated
 
     networks:
       - webnet
