@@ -1,0 +1,19 @@
+services:
+  # Expose Nginx on port 8080 for local access
+  nginx:
+    ports:
+      - "8080:80"
+    labels:
+      - "traefik.enable=false"
+
+  # Expose MariaDB on 3306 for local DB management tools
+  db:
+    ports:
+      - "3306:3306"
+
+  # Expose Adminer on 8081
+  adminer:
+    ports:
+      - "8081:8080"
+    labels:
+      - "traefik.enable=false"

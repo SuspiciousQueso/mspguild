@@ -4,11 +4,22 @@
  * Update these values to match your local/production environment
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'mspguild');
-define('DB_USER', 'portal_user'); // Change for production
-define('DB_PASS', 'CHANGE_THIS_PASSWORD'); // Change for production
+define('DB_HOST', getenv('DB_HOST') ?: 'db');
+define('DB_NAME', getenv('DB_NAME') ?: 'mspguild');
+define('DB_USER', getenv('DB_USER') ?: 'portal_user');
+define('DB_PASS', getenv('DB_PASS') ?: 'CHANGE_THIS_PASSWORD');
 define('DB_CHARSET', 'utf8mb4');
+
+// Security settings
+// ... existing code ...
+// Session configuration
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+// Set cookie secure to false if we are on localhost/HTTP
+$isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+ini_set('session.cookie_secure', $isSecure ? 1 : 0);
+ini_set('session.cookie_samesite', 'Strict');
+
 /**
  * Get database connection using PDO
  * @return PDO Database connection object
