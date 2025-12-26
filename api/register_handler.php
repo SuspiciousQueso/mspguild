@@ -5,7 +5,7 @@
  * Add proper authorization checks before enabling in production
  */
 
-require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/Auth.php';
 
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

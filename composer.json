@@ -1,0 +1,11 @@
+{
+  "name": "mspguild/command-center",
+  "description": "Modular MSP Command Center",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "MSPGuild\\": "src/"
+    }
+  },
+  "require": {}
+}

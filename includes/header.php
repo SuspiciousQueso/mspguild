@@ -11,9 +11,9 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 
 // Load Auth
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/Auth.php';
 
-// Start Session using the secure function defined in auth.php
+// Start Session using the secure function defined in Auth.php
 if (function_exists('startSecureSession')) {
     startSecureSession();
 } elseif (session_status() === PHP_SESSION_NONE) {
@@ -39,7 +39,7 @@ if (function_exists('startSecureSession')) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/css/custom.css">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/custom.css">
 </head>
 <body>
     <!-- Navigation -->
