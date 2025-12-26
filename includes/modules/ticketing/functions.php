@@ -1,9 +1,8 @@
 <?php
 /**
- * Ticketing System Logic
+ * MSPGuild: Ticketing Module Logic
  */
-
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * Get all tickets for a specific user
@@ -32,29 +31,24 @@ function getTicketById($ticketId, $userId) {
 
 /**
  * Create a new support ticket
- * @param int $userId
- * @param array $data
- * @return int|false
  */
 function createTicket($userId, $data) {
     $pdo = getDbConnection();
     $sql = "INSERT INTO tickets (user_id, subject, description, priority, status) VALUES (?, ?, ?, ?, 'open')";
     $stmt = $pdo->prepare($sql);
-    
+
     $result = $stmt->execute([
         $userId,
         $data['subject'],
         $data['description'],
         $data['priority'] ?? 'medium'
     ]);
-    
+
     return $result ? $pdo->lastInsertId() : false;
 }
 
 /**
  * Get comments for a specific ticket
- * @param int $ticketId
- * @return array
  */
 function getTicketComments($ticketId) {
     $pdo = getDbConnection();
@@ -70,10 +64,6 @@ function getTicketComments($ticketId) {
 
 /**
  * Add a comment to a ticket
- * @param int $ticketId
- * @param int $userId
- * @param string $comment
- * @return bool
  */
 function addTicketComment($ticketId, $userId, $comment) {
     $pdo = getDbConnection();
