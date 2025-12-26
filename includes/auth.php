@@ -176,12 +176,14 @@ function logoutUser() {
  * Generate CSRF token
  * @return string
  */
-function generateCsrfToken() {
-    startSecureSession();
-    if (!isset($_SESSION[CSRF_TOKEN_NAME])) {
-        $_SESSION[CSRF_TOKEN_NAME] = bin2hex(random_bytes(32));
+if (!function_exists('generateCsrfToken')) {
+    function generateCsrfToken() {
+        startSecureSession();
+        if (!isset($_SESSION[CSRF_TOKEN_NAME])) {
+            $_SESSION[CSRF_TOKEN_NAME] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION[CSRF_TOKEN_NAME];
     }
-    return $_SESSION[CSRF_TOKEN_NAME];
 }
 
 /**
@@ -189,9 +191,11 @@ function generateCsrfToken() {
  * @param string $token
  * @return bool
  */
-function verifyCsrfToken($token) {
-    startSecureSession();
-    return isset($_SESSION[CSRF_TOKEN_NAME]) && hash_equals($_SESSION[CSRF_TOKEN_NAME], $token);
+if (!function_exists('verifyCsrfToken')) {
+    function verifyCsrfToken($token) {
+        startSecureSession();
+        return isset($_SESSION[CSRF_TOKEN_NAME]) && hash_equals($_SESSION[CSRF_TOKEN_NAME], $token);
+    }
 }
 
 /**
@@ -199,4 +203,9 @@ function verifyCsrfToken($token) {
  * @param string $string
  * @return string
  */
+    if (!function_exists('sanitizeOutput')) {
+        function sanitizeOutput($data) {
+            return htmlspecialchars($data ?? '', ENT_QUOTES, 'UTF-8');
+        }
+    }
 
