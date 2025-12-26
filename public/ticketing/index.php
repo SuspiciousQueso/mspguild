@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../includes/bootstrap.php';
-require_once __DIR__ . '/../includes/tickets.php';
 
 requireAuth();
 $user = getCurrentUser();
