@@ -1,4 +1,5 @@
 <?php
+// Always use __DIR__ for reliable relative pathing!
 require_once __DIR__ . '/bootstrap.php';
 if (!defined('SITE_NAME')) {
     require_once __DIR__ . '/../config/app.php';
