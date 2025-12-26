@@ -19,7 +19,7 @@ define('SUPPORT_PHONE', '(555) 123-4567');
 define('TICKET_SYSTEM_URL', SITE_URL . '/ticketing/index.php');
 define('KNOWLEDGE_BASE_URL', SITE_URL . '/kb/index.php');
 
-// 4. Session & Security Settings (Moved from config.php)
+// 4. Session & Security Settings (Moved from app.php)
 // We wrap these in a check to prevent the "Session already active" warning
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);

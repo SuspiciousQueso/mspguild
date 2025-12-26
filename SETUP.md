@@ -70,7 +70,7 @@ docker exec -i $CONTAINER_NAME mysql -u root -plocalpassword msp_portal < sql/sc
 
 ### Step 5: Update Site Configuration
 
-Edit **`config/config.php`**:
+Edit **`config/app.php`**:
 
 ```php
 // Ensure this points to the external port you mapped in docker-compose (e.g., 8080)
@@ -120,10 +120,10 @@ This workflow is for deploying on your remote Ubuntu VPS.
 ### For Production
 
   * **Remove demo user** from database.
-  * **Update config.php**: Set the production `SITE_URL` and ensure `session.cookie_secure` is set to `1`.
+  * **Update app.php**: Set the production `SITE_URL` and ensure `session.cookie_secure` is set to `1`.
   * **Disable error display**:
     ```php
-    // In config.php or environment handler:
+    // In app.php or environment handler:
     error_reporting(0);
     ini_set('display_errors', 0);
     ```
