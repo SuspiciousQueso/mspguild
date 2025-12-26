@@ -26,27 +26,3 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.use_only_cookies', 1);
     ini_set('session.cookie_secure', 1); // Set to 0 if not using HTTPS yet
 }
-
-/**
- * Global Helper Functions
- * Wrapped in if(!function_exists) to prevent redeclaration errors
- */
-
-if (!function_exists('sanitizeOutput')) {
-    function sanitizeOutput($data) {
-        return htmlspecialchars($data ?? '', ENT_QUOTES, 'UTF-8');
-    }
-}
-
-if (!function_exists('generateCsrfToken')) {
-    function generateCsrfToken() {
-        startSecureSession();
-        // Use a fallback if the constant isn't defined yet
-        $tokenName = defined('CSRF_TOKEN_NAME') ? CSRF_TOKEN_NAME : 'csrf_token';
-        
-        if (!isset($_SESSION[$tokenName])) {
-            $_SESSION[$tokenName] = bin2hex(random_bytes(32));
-        }
-        return $_SESSION[$tokenName];
-    }
-}
