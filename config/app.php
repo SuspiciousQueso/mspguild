@@ -26,10 +26,3 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.use_only_cookies', 1);
     ini_set('session.cookie_secure', 1); // Set to 0 if not using HTTPS yet
 }
-
-/**
- * Global Helper Functions
- * Wrapped in if(!function_exists) to prevent redeclaration errors
- */
-
-
