@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // Always use __DIR__ for reliable relative pathing!
 require_once __DIR__ . '/bootstrap.php';
 
