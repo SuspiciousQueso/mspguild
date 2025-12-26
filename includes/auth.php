@@ -200,3 +200,14 @@ function verifyCsrfToken($token) {
  * @return string
  */
 
+/**
+ * Global Helper Functions
+ * Wrapped in if(!function_exists) to prevent redeclaration errors
+ */
+
+if (!function_exists('sanitizeOutput')) {
+    function sanitizeOutput($data) {
+        return htmlspecialchars($data ?? '', ENT_QUOTES, 'UTF-8');
+    }
+}
+

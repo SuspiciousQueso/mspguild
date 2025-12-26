@@ -40,9 +40,13 @@ if (!function_exists('sanitizeOutput')) {
 
 if (!function_exists('generateCsrfToken')) {
     function generateCsrfToken() {
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        startSecureSession();
+        // Use a fallback if the constant isn't defined yet
+        $tokenName = defined('CSRF_TOKEN_NAME') ? CSRF_TOKEN_NAME : 'csrf_token';
+        
+        if (!isset($_SESSION[$tokenName])) {
+            $_SESSION[$tokenName] = bin2hex(random_bytes(32));
         }
-        return $_SESSION['csrf_token'];
+        return $_SESSION[$tokenName];
     }
 }
