@@ -14,6 +14,11 @@ define('ENABLE_INVOICING', false);
 // Site Info
 define('SITE_URL', 'https://mspguild.tech');
 define('SUPPORT_EMAIL', 'support@mspguild.tech');
-define('SUPPORT_PHONE', '(409) 123-4567');
+define('SUPPORT_PHONE', '(555) 123-4567');
+
+// Module URLs
+define('TICKET_SYSTEM_URL', SITE_URL . '/ticketing/index.php');
+define('KNOWLEDGE_BASE_URL', SITE_URL . '/kb/index.php');
+define('RESUME_URL', 'https://your-resume-link.com'); // Update this!
 
 // Security & Environment

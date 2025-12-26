@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../includes/bootstrap.php';
 $pageTitle = 'Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 

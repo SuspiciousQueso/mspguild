@@ -1,61 +1,26 @@
 <?php
-require_once __DIR__ . '/../../includes/modules/ticketing/functions.php';
-
-requireAuth();
-$user = getCurrentUser();
-
-if (!defined('ENABLE_TICKETING') || !ENABLE_TICKETING) {
-    header("Location: ../index.php");
-    exit;
-}
-
-$tickets = getUserTickets($user['id']);
-$pageTitle = "My Support Tickets";
-include __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$pageTitle = "Welcome to MSPGuild";
+include __DIR__ . '/../includes/header.php';
 ?>
 
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Support Tickets</h2>
-            <a href="create.php" class="btn btn-success">Open New Ticket</a>
-        </div>
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold text-primary mb-4">Your Command Center</h1>
+                <p class="lead mb-4">Self-hosted, modular, and built for technicians. Welcome to the MSPGuild Customer Portal.</p>
 
-        <?php if (empty($tickets)): ?>
-            <div class="alert alert-info">You don't have any support tickets yet.</div>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="table table-hover border">
-                    <thead class="thead-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Subject</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                        <th>Last Updated</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($tickets as $ticket): ?>
-                        <tr>
-                            <td>#<?php echo $ticket['id']; ?></td>
-                            <td><strong><?php echo sanitizeOutput($ticket['subject']); ?></strong></td>
-                            <td>
-                                <span class="badge <?php echo getStatusBadgeClass($ticket['status']); ?>">
-                                    <?php echo ucfirst(str_replace('-', ' ', $ticket['status'])); ?>
-                                </span>
-                            </td>
-                            <td><?php echo ucfirst($ticket['priority']); ?></td>
-                            <td><?php echo date('M j, Y g:i a', strtotime($ticket['updated_at'])); ?></td>
-                            <td>
-                                <a href="view.php?id=<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <?php if (isLoggedIn()): ?>
+                    <a href="dashboard.php" class="btn btn-primary btn-lg px-5">Go to Dashboard</a>
+                <?php else: ?>
+                    <a href="login.php" class="btn btn-primary btn-lg px-5">Client Login</a>
+                    <a href="contact.php" class="btn btn-outline-secondary btn-lg px-5 ms-2">Contact Us</a>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=800" alt="Tech Dashboard" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
     </div>
 
-<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
