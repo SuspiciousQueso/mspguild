@@ -19,7 +19,3 @@ if (function_exists('startSecureSession')) {
 } elseif (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-/**
- * Any logic that must run on EVERY request goes here
- */
