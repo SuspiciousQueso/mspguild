@@ -199,6 +199,4 @@ function verifyCsrfToken($token) {
  * @param string $string
  * @return string
  */
-function sanitizeOutput($string) {
-    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-}
+
