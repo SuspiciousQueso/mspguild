@@ -3,8 +3,8 @@
  * Authentication Functions
  */
 
-require_once __DIR__ . '/../config/app.php';
-require_once __DIR__ . '/../config/database.php';
+// Removed redundant require_once calls to config files 
+// as they are handled by bootstrap.php or the calling script.
 
 /**
  * Start secure session
