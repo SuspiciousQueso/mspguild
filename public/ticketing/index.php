@@ -11,7 +11,7 @@ if (!defined('ENABLE_TICKETING') || !ENABLE_TICKETING) {
 
 $tickets = getUserTickets($user['id']);
 $pageTitle = "My Support Tickets";
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container mt-4">
@@ -60,4 +60,4 @@ include __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>
