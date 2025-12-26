@@ -41,12 +41,24 @@ if (!function_exists('sanitizeOutput')) {
 if (!function_exists('generateCsrfToken')) {
     function generateCsrfToken() {
         startSecureSession();
-        // Use a fallback if the constant isn't defined yet
-        $tokenName = defined('CSRF_TOKEN_NAME') ? CSRF_TOKEN_NAME : 'csrf_token';
-        
-        if (!isset($_SESSION[$tokenName])) {
-            $_SESSION[$tokenName] = bin2hex(random_bytes(32));
+        if (!isset($_SESSION[CSRF_TOKEN_NAME])) {
+            $_SESSION[CSRF_TOKEN_NAME] = bin2hex(random_bytes(32));
         }
-        return $_SESSION[$tokenName];
+        return $_SESSION[CSRF_TOKEN_NAME];
     }
 }
+
+/**
+ * Verify CSRF token
+ * @param string $token
+ * @return bool
+ */
+if (!function_exists('verifyCsrfToken')) {
+    function verifyCsrfToken($token) {
+        startSecureSession();
+        return isset($_SESSION[CSRF_TOKEN_NAME]) && hash_equals($_SESSION[CSRF_TOKEN_NAME], $token);
+    }
+}
+
+/**
+ * Sanitize output to prevent XSS
