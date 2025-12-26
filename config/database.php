@@ -6,9 +6,9 @@
 
 define('DB_HOST', getenv('DB_HOST') ?: 'db');
 define('DB_NAME', getenv('DB_NAME') ?: 'mspguild');
-define('DB_USER', getenv('DB_USER') ?: 'portal_user');
-define('DB_PASS', getenv('DB_PASS') ?: 'CHANGE_THIS_PASSWORD');
-define('DB_CHARSET', 'utf8mb4');
+define('DB_USER', getenv('DB_USER') ?: 'mspguild');
+define('DB_PASS', getenv('DB_PASS') ?: 'SassyPeopleEatCheese');
+define('DB_CHARSET', 'utf8');
 
 // Security settings
 // ... existing code ...

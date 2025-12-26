@@ -1,24 +1,37 @@
 <?php
 /**
- * MSPGuild Module Configuration
- * Toggle modules on/off system-wide.
+ * MSPGuild Global Configuration
  */
 
-// Module Switches
+// 1. Module Switches
 define('ENABLE_TICKETING', true);
 define('ENABLE_KNOWLEDGEBASE', false);
 define('ENABLE_CRM', false);
 define('ENABLE_RMM', false);
 define('ENABLE_INVOICING', false);
 
-// Site Info
+// 2. Site Info (Updated to your production domain)
 define('SITE_URL', 'https://mspguild.tech');
 define('SUPPORT_EMAIL', 'support@mspguild.tech');
 define('SUPPORT_PHONE', '(555) 123-4567');
 
-// Module URLs
+// 3. Module URLs
 define('TICKET_SYSTEM_URL', SITE_URL . '/ticketing/index.php');
 define('KNOWLEDGE_BASE_URL', SITE_URL . '/kb/index.php');
-define('RESUME_URL', 'https://your-resume-link.com'); // Update this!
 
-// Security & Environment
+// 4. Session & Security Settings (Moved from config.php)
+// We wrap these in a check to prevent the "Session already active" warning
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_secure', 1); // Set to 0 if not using HTTPS yet
+}
+
+/**
+ * Basic output sanitization
+ */
+if (!function_exists('sanitizeOutput')) {
+    function sanitizeOutput($data) {
+        return htmlspecialchars($data ?? '', ENT_QUOTES, 'UTF-8');
+    }
+}
