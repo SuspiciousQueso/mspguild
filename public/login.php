@@ -1,20 +1,35 @@
 <?php
-$pageTitle = 'Client Login';
-require_once __DIR__ . '/../includes/header.php';
-
-// Redirect if already logged in
-if (isLoggedIn()) {
-    header('Location: ' . SITE_URL . '/dashboard.php');
-    exit;
-}
+require_once __DIR__ . '/../includes/auth.php';
 
 $error = '';
-if (isset($_SESSION['login_error'])) {
-    $error = $_SESSION['login_error'];
-    unset($_SESSION['login_error']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $csrf_token = $_POST['csrf_token'] ?? '';
+
+    if (!verifyCsrfToken($csrf_token)) {
+        $error = "Invalid security token.";
+    } elseif (empty($email) || empty($password)) {
+        $error = "Please enter both email and password.";
+    } else {
+        $user = authenticateUser($email, $password);
+        if ($user) {
+            loginUser($user);
+
+            // Redirect back to intended page or dashboard
+            $redirect = $_SESSION['redirect_after_login'] ?? 'index.php';
+            unset($_SESSION['redirect_after_login']);
+            header("Location: " . $redirect);
+            exit;
+        } else {
+            $error = "Invalid email or password.";
+        }
+    }
 }
 
-$csrfToken = generateCsrfToken();
+$pageTitle = "Login";
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container py-5">
@@ -36,7 +51,7 @@ $csrfToken = generateCsrfToken();
                     <?php endif; ?>
 
                     <form action="<?php echo SITE_URL; ?>/../api/login_handler.php" method="POST" id="loginForm">
-                        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo $pageTitle; ?>">
                         
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>

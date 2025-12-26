@@ -3,15 +3,23 @@
  * Application Configuration
  */
 
+// Application Settings
+define('SITE_NAME', 'MSP Guild Portal');
+define('SITE_URL', 'http://localhost:8080');
+
+// Feature Toggles
+define('ENABLE_TICKETING', true); // Set to false to hide ticketing features
+define('TICKETING_SYSTEM', 'internal'); // Options: internal, syncro, connectwise
+
 // Site settings
-define('SITE_NAME', 'MSPGuild');
 define('SITE_TAGLINE', 'OnpenSource AiO MSP Client Support and Management Portal');
-define('SITE_URL', 'https://mspguild.tech'); // Update for production
 define('SUPPORT_EMAIL', 'support@mspguild.com');
 define('SUPPORT_PHONE', '(555) 123-4567');
 
 // Security settings
 define('SESSION_LIFETIME', 3600); // 1 hour in seconds
+
+// CSRF Protection
 define('CSRF_TOKEN_NAME', 'csrf_token');
 
 // Password requirements

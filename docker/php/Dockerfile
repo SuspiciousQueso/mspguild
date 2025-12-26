@@ -24,8 +24,7 @@ WORKDIR /var/www/html
 # RUN composer install --no-dev --no-autoloader || true
 
 # permissions helper
-RUN useradd -m appuser || true
-USER appuser
+USER mspguild
 
 EXPOSE 9000
 CMD ["php-fpm"]

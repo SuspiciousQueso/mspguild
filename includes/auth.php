@@ -82,6 +82,68 @@ function authenticateUser($email, $password) {
 }
 
 /**
+ * Register a new user
+ * @param array $userData
+ * @return int|false ID of new user or false
+ */
+function registerUser($userData) {
+    $pdo = getDbConnection();
+    
+    // Check if email already exists
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$userData['email']]);
+    if ($stmt->fetch()) {
+        return false;
+    }
+
+    $passwordHash = password_hash($userData['password'], PASSWORD_DEFAULT);
+    
+    $sql = "INSERT INTO users (email, password_hash, full_name, company_name, contact_phone, service_tier, is_active, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, 1, NOW())";
+    
+    $stmt = $pdo->prepare($sql);
+    $result = $stmt->execute([
+        $userData['email'],
+        $passwordHash,
+        $userData['full_name'],
+        $userData['company_name'] ?? null,
+        $userData['contact_phone'] ?? null,
+        $userData['service_tier'] ?? 'basic'
+    ]);
+
+    return $result ? $pdo->lastInsertId() : false;
+}
+
+/**
+ * Update user profile
+ * @param int $userId
+ * @param array $data
+ * @return bool
+ */
+function updateUserProfile($userId, $data) {
+    $pdo = getDbConnection();
+    
+    $fields = [];
+    $params = [];
+    
+    $allowedFields = ['full_name', 'company_name', 'contact_phone'];
+    foreach ($allowedFields as $field) {
+        if (isset($data[$field])) {
+            $fields[] = "$field = ?";
+            $params[] = $data[$field];
+        }
+    }
+    
+    if (empty($fields)) return false;
+    
+    $params[] = $userId;
+    $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = ?";
+    
+    $stmt = $pdo->prepare($sql);
+    return $stmt->execute($params);
+}
+
+/**
  * Log in user
  * @param array $user User data from database
  */

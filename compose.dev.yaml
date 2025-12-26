@@ -1,19 +1,31 @@
 services:
-  # Expose Nginx on port 8080 for local access
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - .:/var/www/html  # This is the magic: mounts your local folder
+    environment:
+      - APP_ENV=local
+    depends_on:
+      - db
+
   nginx:
+    image: nginx:alpine
     ports:
       - "8080:80"
-    labels:
-      - "traefik.enable=false"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
 
-  # Expose MariaDB on 3306 for local DB management tools
   db:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mspguild
     ports:
       - "3306:3306"
-
-  # Expose Adminer on 8081
-  adminer:
-    ports:
-      - "8081:8080"
-    labels:
-      - "traefik.enable=false"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d # Auto-loads your schema on start
