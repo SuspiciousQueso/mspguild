@@ -11,7 +11,7 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 
 // Load Auth
-require_once __DIR__ . '/Auth.php';
+require_once __DIR__ . '/../src/Core/Auth.php';
 
 // Start Session using the secure function defined in Auth.php
 if (function_exists('startSecureSession')) {
