@@ -19,7 +19,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../src/Core/Auth.php';
     require_once __DIR__ . '/../src/Core/Session.php';
 }
-
+// Load helper functions
+require_once __DIR__ . '/functions.php';
 // Load helper functions
 // Start Session using the secure function defined in Auth.php
 if (function_exists('startSecureSession')) {
