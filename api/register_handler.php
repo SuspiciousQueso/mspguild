@@ -5,7 +5,9 @@
  * Add proper authorization checks before enabling in production
  */
 
-require_once __DIR__ . '/../includes/Auth.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+
+use MSPGuild\Core\Database;
 
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -60,7 +62,7 @@ if (!in_array($serviceTier, $validTiers)) {
 }
 
 try {
-    $pdo = getDbConnection();
+    $pdo = Database::getConnection();
     
     // Check if email already exists
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");

@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
+use MSPGuild\Core\Database;
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . SITE_URL . '/contact.php');
     exit;
@@ -44,7 +46,7 @@ if (strlen($name) > 255 || strlen($email) > 255 || strlen($company) > 255 ||
 
 try {
     // Insert into database
-    $pdo = getDbConnection();
+    $pdo = Database::getConnection();
     $stmt = $pdo->prepare("
         INSERT INTO contact_submissions (name, email, company, phone, message, status) 
         VALUES (?, ?, ?, ?, ?, 'New')
