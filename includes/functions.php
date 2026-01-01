@@ -6,7 +6,7 @@ use MSPGuild\Core\Database;
 
 /**
  * Sanitize output for safe display in HTML
- * 
+ *
  * @param string|null $data The string to sanitize
  * @return string The sanitized string
  */
@@ -16,7 +16,20 @@ function sanitizeOutput($data) {
     }
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
+/**
+ * Authenticate a user
+ */
+function authenticateUser($email, $password) {
+    $pdo = Database::getConnection();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
 
+    if ($user && password_verify($password, $user['password_hash'])) {
+        return $user;
+    }
+    return false;
+}
 /**
  * Register a new user
  */
@@ -44,22 +57,5 @@ function registerUser($data)
         ]);
         return $result ? $pdo->lastInsertId() : false;
     } catch (PDOException $e) {
-// ... existing code ...
-        /**
-         * Authenticate a user
-         */
-        function authenticateUser($email, $password)
-        {
-            $pdo = Database::getConnection();
-            // Fixed: Changed column name to 'password_hash'
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1");
-            $stmt->execute([$email]);
-            $user = $stmt->fetch();
-
-            if ($user && password_verify($password, $user['password_hash'])) {
-                return $user;
-            }
-            return false;
-        }
     }
 }
