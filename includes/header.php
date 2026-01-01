@@ -25,6 +25,7 @@ $isLoggedIn  = $isLoggedIn  ?? false;
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/custom.css">
 </head>
 <body>
+<?php if ($isLoggedIn): ?>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
@@ -40,8 +41,8 @@ $isLoggedIn  = $isLoggedIn  ?? false;
                         <a class="nav-link <?php echo $currentPage === 'index' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo TICKET_SYSTEM_URL; ?>">
-                            <i class="bi bi-ticket-perforated"></i> Support Tickets
+                        <a class="nav-link" href="<?php echo FRONTDESK_URL; ?>">
+                            <i class="bi bi-inbox"></i> FrontDesk
                         </a>
                     </li>
                     <li class="nav-item">
@@ -71,6 +72,18 @@ $isLoggedIn  = $isLoggedIn  ?? false;
                         </li>
                     <?php endif; ?>
                 </ul>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'register' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_registration.php">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
