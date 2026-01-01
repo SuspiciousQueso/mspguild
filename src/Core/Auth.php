@@ -74,5 +74,22 @@ class Auth {
         $tokenName = defined('CSRF_TOKEN_NAME') ? CSRF_TOKEN_NAME : 'csrf_token';
         return isset($_SESSION[$tokenName]) && hash_equals($_SESSION[$tokenName], $token);
     }
+
+    public static function authenticate($email, $password)
+    {
+        $pdo = Database::getConnection();
+
+        $stmt = $pdo->prepare(
+            "SELECT * FROM users WHERE email = ? AND is_active = 1"
+        );
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($password, $user['password_hash'])) {
+            return $user;
+        }
+
+        return false;
+    }
 }
 

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid security token.";
     } else {
         // Use the authenticateUser function we added to includes/functions.php
-        $user = authenticateUser($email, $password);
+        $user = Auth::authenticate($email, $password);
         
         if ($user) {
             Auth::loginUser($user);
