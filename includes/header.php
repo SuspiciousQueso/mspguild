@@ -59,8 +59,7 @@ if (!$isLoggedIn) {
 <body class="h-full bg-slate-900 text-slate-200 flex flex-col m-0 p-0 overflow-hidden">
 
 <nav class="w-full bg-slate-900 px-6 py-3 flex justify-between items-center z-50 border-b border-slate-800 shrink-0">
-
-    <!-- Left: brand + badge -->
+    <!-- Left -->
     <div class="flex items-center gap-6">
         <a href="<?php echo $siteUrl; ?>/index.php"
            class="text-2xl font-black tracking-tighter text-emerald-400 uppercase">
@@ -73,7 +72,7 @@ if (!$isLoggedIn) {
         </div>
     </div>
 
-    <!-- Right: nav links -->
+    <!-- Right -->
     <div class="flex gap-6 items-center">
         <a href="<?php echo $siteUrl; ?>/index.php"
            class="text-xs font-bold uppercase tracking-widest <?php echo $currentPage === 'index' ? 'text-white' : 'text-slate-400 hover:text-white'; ?>">
