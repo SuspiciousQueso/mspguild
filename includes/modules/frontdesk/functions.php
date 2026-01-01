@@ -49,28 +49,29 @@ function createTicket($userId, $data) {
     return $result ? $pdo->lastInsertId() : false;
 }
 
-/**
- * Get comments for a specific ticket
- */
-function getTicketComments($ticketId) {
+function getTicketMessages($ticketId) {
     $pdo = Database::getConnection();
-    $sql = "SELECT tc.*, u.full_name 
-            FROM ticket_comments tc 
-            JOIN users u ON tc.user_id = u.id 
-            WHERE tc.ticket_id = ? 
-            ORDER BY tc.created_at ASC";
+    $sql = "SELECT tm.*, u.full_name
+            FROM ticket_messages tm
+            JOIN users u ON tm.user_id = u.id
+            WHERE tm.ticket_id = ?
+            ORDER BY tm.created_at ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$ticketId]);
     return $stmt->fetchAll();
 }
 
-/**
- * Add a comment to a ticket
- */
-function addTicketComment($ticketId, $userId, $comment) {
+function addTicketMessage($ticketId, $userId, $body, $visibility = 'public') {
     $pdo = Database::getConnection();
-    $stmt = $pdo->prepare("INSERT INTO ticket_comments (ticket_id, user_id, comment) VALUES (?, ?, ?)");
-    return $stmt->execute([$ticketId, $userId, $comment]);
+    $stmt = $pdo->prepare("INSERT INTO ticket_messages (ticket_id, user_id, body, visibility) VALUES (?, ?, ?, ?)");
+    return $stmt->execute([$ticketId, $userId, $body, $visibility]);
+}
+
+function logTicketEvent($ticketId, $eventType, $actorUserId = null, $meta = null) {
+    $pdo = Database::getConnection();
+    $stmt = $pdo->prepare("INSERT INTO ticket_events (ticket_id, actor_user_id, event_type, meta) VALUES (?, ?, ?, ?)");
+    $metaJson = $meta ? json_encode($meta) : null;
+    return $stmt->execute([$ticketId, $actorUserId, $eventType, $metaJson]);
 }
 
 /**
