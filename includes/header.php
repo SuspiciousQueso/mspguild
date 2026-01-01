@@ -77,6 +77,45 @@ $isLoggedIn  = $isLoggedIn  ?? false;
                 </ul>
 
                 <?php else: ?>
+                <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+                    <div class="container">
+                        <a class="navbar-brand fw-bold" href="<?php echo SITE_URL; ?>/index.php">
+                            <i class="bi bi-shield-check"></i> <?php echo SITE_NAME; ?>
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo $currentPage === 'index' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/index.php">Home</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?php echo defined('FRONTDESK_URL') ? FRONTDESK_URL : (SITE_URL . '/modules/frontdesk/index.php'); ?>">
+                                        FrontDesk
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo $currentPage === 'contact' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/contact.php">Contact</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?php echo defined('RESUME_URL') ? RESUME_URL : '#'; ?>" target="_blank">Resume</a>
+                                </li>
+
+                                <?php if (!empty($isLoggedIn)): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link <?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/dashboard.php">Dashboard</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link <?php echo $currentPage === 'profile' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_profile_update.php">Profile</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="<?php echo SITE_URL; ?>/logout.php">Logout</a>
+                                    </li>
                     <li class="nav-item">
                         <a class="nav-link <?php echo $currentPage === 'register' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_registration.php"><i class="bi bi-person-plus"></i>Register</a>
                     </li>
