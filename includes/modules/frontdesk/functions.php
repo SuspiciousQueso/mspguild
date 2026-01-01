@@ -58,7 +58,7 @@ function createTicket(int $userId, array $data)
 
     // 4) Validate ticket type
     $ticketType = $data['ticket_type'] ?? 'R';
-    if (!in_array($ticketType, ['R', 'T'], true)) {
+    if (!in_array($ticketType, ['R', 'I'], true)) {
         $ticketType = 'R';
     }
 

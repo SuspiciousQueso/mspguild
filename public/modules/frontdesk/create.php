@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($form['subject'] === '' || $form['description'] === '') {
             $error = "Subject and description are required.";
-        } elseif (!in_array($form['ticket_type'], ['R', 'T'], true)) {
+        } elseif (!in_array($form['ticket_type'], ['R', 'I'], true)) {
             $error = "Invalid ticket type.";
         } else {
             $ticketId = createTicket((int)$user['id'], [
