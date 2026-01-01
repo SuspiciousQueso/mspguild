@@ -105,6 +105,9 @@ $isLoggedIn  = $isLoggedIn  ?? false;
                                 <li class="nav-item">
                                     <a class="nav-link" href="<?php echo defined('RESUME_URL') ? RESUME_URL : '#'; ?>" target="_blank">Resume</a>
                                 </li>
+                                <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php"><i class="bi bi-box-arrow-in-right"></i>Login</a>
+                    </li>
 
                                 <?php if (!empty($isLoggedIn)): ?>
                                     <li class="nav-item">
