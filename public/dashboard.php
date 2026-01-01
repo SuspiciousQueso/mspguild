@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 use MSPGuild\Core\Auth;
 
 // Protect the page
-Auth::Auth::requireAuth();
+Auth::requireAuth();
 
 $pageTitle   = "Dashboard";
 $currentPage = 'dashboard';
