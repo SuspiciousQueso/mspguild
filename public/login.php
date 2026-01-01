@@ -77,7 +77,12 @@ include __DIR__ . '/../includes/header.php';
                         </div>
                     </form>
 
-                    <hr class="my-4">
+                        <hr class="my-4">
+
+                        <div class="text-center mb-3">
+                            <p class="mb-1">Don't have an account yet?</p>
+                            <a href="user_registration.php" class="btn btn-outline-success">Create Guild Account</a>
+                        </div>
 
                     <div class="text-center">
                         <p class="text-muted small mb-2">Forgot your password?</p>
