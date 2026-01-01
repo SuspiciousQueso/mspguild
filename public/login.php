@@ -1,13 +1,14 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
-$isLoggedIn = \MSPGuild\Core\Auth::isLoggedIn();
-
 
 use MSPGuild\Core\Auth;
+
 $pageTitle   = "Login";
 $currentPage = 'login';
 $isLoggedIn  = Auth::isLoggedIn();
+
 $error = '';
+$email = ''; // so the form can repopulate safely
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
@@ -58,23 +59,45 @@ include __DIR__ . '/../includes/header.php';
                     <?php endif; ?>
 
                         <!-- Fix: Changed action to login.php so it handles its own logic -->
-                        <form action="login.php" method="POST" id="loginForm">
-                            <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
+                    <form action="login.php" method="POST" id="loginForm">
+                        <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input
+                                        type="email"
+                                        class="form-control"
+                                        id="email"
+                                        name="email"
+                                        required
+                                        placeholder="you@example.com"
+                                        autocomplete="username"
+                                        value="<?php echo isset($email) ? sanitizeOutput($email) : ''; ?>"
+                                >
+                            </div>
+                        </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input type="password" class="form-control" id="password" name="password" required
-                                       placeholder="Enter your password" autocomplete="current-password">
+                                <input
+                                        type="password"
+                                        class="form-control"
+                                        id="password"
+                                        name="password"
+                                        required
+                                        placeholder="Enter your password"
+                                        autocomplete="current-password"
+                                >
                             </div>
                         </div>
 
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">
-                                Remember me
-                            </label>
+                            <label class="form-check-label" for="remember">Remember me</label>
                         </div>
 
                         <div class="d-grid">
@@ -84,7 +107,8 @@ include __DIR__ . '/../includes/header.php';
                         </div>
                     </form>
 
-                        <hr class="my-4">
+
+                    <hr class="my-4">
 
                         <div class="text-center mb-3">
                             <p class="mb-1">Don't have an account yet?</p>
