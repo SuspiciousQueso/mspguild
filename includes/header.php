@@ -109,23 +109,24 @@ $isLoggedIn  = $isLoggedIn  ?? false;
                         <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php"><i class="bi bi-box-arrow-in-right"></i>Login</a>
                     </li>
 
-                                <?php if (!empty($isLoggedIn)): ?>
+                       <!--        <?php // if (!empty($isLoggedIn)): ?>
                                     <li class="nav-item">
-                                        <a class="nav-link <?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/dashboard.php">Dashboard</a>
+                                        <a class="nav-link <?php //echo $currentPage === 'dashboard' ? 'active' : ''; ?>" href="<?php //echo SITE_URL; ?>/dashboard.php">Dashboard</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link <?php echo $currentPage === 'profile' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_profile_update.php">Profile</a>
+                                        <a class="nav-link <?php //echo $currentPage === 'profile' ? 'active' : ''; ?>" href="<?php //echo SITE_URL; ?>/user_profile_update.php">Profile</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="<?php echo SITE_URL; ?>/logout.php">Logout</a>
+                                        <a class="nav-link" href="<?php //echo SITE_URL; ?>/logout.php">Logout</a>
                                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'register' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_registration.php"><i class="bi bi-person-plus"></i>Register</a>
+                        <a class="nav-link <?php //echo $currentPage === 'register' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_registration.php"><i class="bi bi-person-plus"></i>Register</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php"><i class="bi bi-box-arrow-in-right"></i>Login</a>
+                        <a class="nav-link <?php //echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php"><i class="bi bi-box-arrow-in-right"></i>Login</a>
                     </li>
-                <?php endif; ?>
+                <?php //endif; ?>
+                -->
             </div>
         </div>
     </nav>
