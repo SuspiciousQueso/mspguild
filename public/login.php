@@ -1,7 +1,7 @@
 <?php
-
-$isLoggedIn = \MSPGuild\Core\Auth::isLoggedIn();
 require_once __DIR__ . '/../includes/bootstrap.php';
+$isLoggedIn = \MSPGuild\Core\Auth::isLoggedIn();
+
 
 use MSPGuild\Core\Auth;
 $pageTitle   = "Login";
