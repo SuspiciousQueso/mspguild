@@ -34,9 +34,9 @@ class Auth {
 
     public static function getCurrentUser() {
         if (!self::isLoggedIn()) return null;
-        
+
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT id, email, full_name, company_name, contact_phone, service_tier, created_at FROM users WHERE id = ? AND is_active = 1");
+        $stmt = $pdo->prepare("SELECT id, email, full_name, company_name, contact_phone, service_tier, created_at, is_admin, enabled_modules FROM users WHERE id = ? AND is_active = 1");
         $stmt->execute([$_SESSION['user_id']]);
         return $stmt->fetch();
     }

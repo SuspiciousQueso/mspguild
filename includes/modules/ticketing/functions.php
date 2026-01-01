@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../bootstrap.php';
 use MSPGuild\Core\Database;
 
 /**
- * Get all tickets for a specific user
+ * Register a new user
  * @param int $userId
  * @return array
  */
@@ -84,4 +84,5 @@ function getStatusBadgeClass($status) {
         case 'closed': return 'bg-secondary';
         default: return 'bg-light text-dark';
     }
+    return false;
 }

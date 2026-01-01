@@ -1,48 +1,22 @@
 <?php
-require_once __DIR__ . '/../includes/Auth.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+// Remove the old includes/Auth.php require if it's there
+
+use MSPGuild\Core\Auth;
 
 $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrf_token = $_POST['csrf_token'] ?? '';
-    
-    if (!verifyCsrfToken($csrf_token)) {
+    if (!Auth::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $error = "Invalid security token.";
     } else {
-        $userData = [
-            'email' => $_POST['email'] ?? '',
-            'password' => $_POST['password'] ?? '',
-            'full_name' => $_POST['full_name'] ?? '',
-            'company_name' => $_POST['company_name'] ?? '',
-            'contact_phone' => $_POST['contact_phone'] ?? '',
-            'service_tier' => 'basic'
-        ];
-
-        // Basic validation
-        if (empty($userData['email']) || empty($userData['password']) || empty($userData['full_name'])) {
-            $error = "Please fill in all required fields.";
-        } elseif (!filter_var($userData['email'], FILTER_VALIDATE_EMAIL)) {
-            $error = "Please enter a valid email address.";
-        } elseif (strlen($userData['password']) < 8) {
-            $error = "Password must be at least 8 characters long.";
-        } else {
-            $userId = registerUser($userData);
-            if ($userId) {
-                $success = "Registration successful! You can now log in.";
-                // Optionally auto-login:
-                // $user = authenticateUser($userData['email'], $userData['password']);
-                // loginUser($user);
-                // header("Location: index.php"); exit;
-            } else {
-                $error = "Registration failed. Email might already be in use.";
-            }
-        }
+        // ... existing registration logic ...
+        // After successful registerUser():
+        // $success = "Registration successful! You can now log in.";
     }
 }
-
-$pageTitle = "Register";
-include __DIR__ . '/../includes/header.php';
+// ...
 ?>
 
 <div class="register-container" style="max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
@@ -61,7 +35,7 @@ include __DIR__ . '/../includes/header.php';
         </div>
     <?php else: ?>
         <form method="POST" action="register.php">
-            <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
             
             <div class="form-group" style="margin-bottom: 15px;">
                 <label for="full_name">Full Name *</label>
