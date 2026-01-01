@@ -5,11 +5,11 @@ namespace MSPGuild\Core;
  * Auth Class - Handles all security and user state
  */
 class Auth {
-    
+
     public static function startSecureSession() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
-            
+
             if (!isset($_SESSION['created'])) {
                 $_SESSION['created'] = time();
             } else if (time() - $_SESSION['created'] > 1800) {
@@ -26,7 +26,8 @@ class Auth {
 
     public static function requireAuth() {
         if (!self::isLoggedIn()) {
-            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+            self::startSecureSession();
+            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? (SITE_URL . '/dashboard.php');
             header('Location: ' . SITE_URL . '/login.php');
             exit;
         }
@@ -36,7 +37,9 @@ class Auth {
         if (!self::isLoggedIn()) return null;
 
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT id, email, full_name, company_name, contact_phone, service_tier, created_at, is_admin, enabled_modules FROM users WHERE id = ? AND is_active = 1");
+        $stmt = $pdo->prepare("SELECT id, email, full_name, company_name, contact_phone, service_tier, created_at, is_admin, enabled_modules
+                               FROM users
+                               WHERE id = ? AND is_active = 1");
         $stmt->execute([$_SESSION['user_id']]);
         return $stmt->fetch();
     }
@@ -44,20 +47,11 @@ class Auth {
     public static function loginUser($user) {
         self::startSecureSession();
         session_regenerate_id(true);
-        
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_name'] = $user['full_name'];
-        $_SESSION['login_time'] = time();
-    }
 
-    public static function logoutUser() {
-        self::startSecureSession();
-        $_SESSION = array();
-        if (isset($_COOKIE[session_name()])) {
-            setcookie(session_name(), '', time() - 3600, '/');
-        }
-        session_destroy();
+        $_SESSION['user_id']    = $user['id'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_name']  = $user['full_name'];
+        $_SESSION['login_time'] = time();
     }
 
     public static function generateCsrfToken() {
@@ -72,31 +66,32 @@ class Auth {
     public static function verifyCsrfToken($token) {
         self::startSecureSession();
         $tokenName = defined('CSRF_TOKEN_NAME') ? CSRF_TOKEN_NAME : 'csrf_token';
-        return isset($_SESSION[$tokenName]) && hash_equals($_SESSION[$tokenName], $token);
+        return isset($_SESSION[$tokenName]) && is_string($token) && hash_equals($_SESSION[$tokenName], $token);
     }
 
     public static function authenticate($email, $password)
     {
+        $email = trim((string)$email);
         $pdo = Database::getConnection();
 
-        $stmt = $pdo->prepare(
-            "SELECT * FROM users WHERE email = ? AND is_active = 1"
-        );
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && password_verify((string)$password, $user['password_hash'])) {
             return $user;
         }
 
         return false;
     }
+
+    /**
+     * Single canonical logout method.
+     * (Keep this as the one true logout to avoid drift.)
+     */
     public static function logout()
     {
-        // Ensure we have a session
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::startSecureSession();
 
         // Unset all session variables
         $_SESSION = [];
@@ -108,25 +103,25 @@ class Auth {
                 session_name(),
                 '',
                 time() - 42000,
-                $params["path"],
-                $params["domain"],
+                $params["path"] ?? '/',
+                $params["domain"] ?? '',
                 $params["secure"] ?? false,
                 $params["httponly"] ?? true
             );
         }
 
-        /**
-         * Regenerate session ID BEFORE destroying the session
-         * (prevents fixation and avoids "no active session" warning)
-         */
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            @session_regenerate_id(true);
-        }
+        // Regenerate to prevent fixation (safe even if suppressed)
+        @session_regenerate_id(true);
 
-        // Now destroy the session
+        // Destroy session
         session_destroy();
     }
 
-
+    /**
+     * Back-compat wrapper (optional).
+     * If anything still calls logoutUser(), it will still work.
+     */
+    public static function logoutUser() {
+        self::logout();
+    }
 }
-

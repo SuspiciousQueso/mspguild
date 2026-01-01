@@ -8,25 +8,30 @@ $currentPage = 'login';
 $isLoggedIn  = Auth::isLoggedIn();
 
 $error = '';
-$email = ''; // so the form can repopulate safely
+$email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $email      = trim($_POST['email'] ?? '');
+    $password   = $_POST['password'] ?? '';
     $csrf_token = $_POST['csrf_token'] ?? '';
 
     if (!Auth::verifyCsrfToken($csrf_token)) {
         $error = "Invalid security token.";
     } else {
-        // Use the authenticateUser function we added to includes/functions.php
         $user = Auth::authenticate($email, $password);
-        
+
         if ($user) {
             Auth::loginUser($user);
-            
+
             // Redirect to dashboard or the page they were trying to reach
             $redirect = $_SESSION['redirect_after_login'] ?? 'dashboard.php';
             unset($_SESSION['redirect_after_login']);
+
+            // Safety: prevent weird external redirects
+            if (str_starts_with($redirect, 'http://') || str_starts_with($redirect, 'https://')) {
+                $redirect = 'dashboard.php';
+            }
+
             header("Location: " . $redirect);
             exit;
         } else {
@@ -35,99 +40,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pageTitle = "Login";
-
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-shield-lock text-primary display-3"></i>
-                        <h2 class="fw-bold mt-3">Client Portal</h2>
-                        <p class="text-muted">Sign in to access your account</p>
-                    </div>
+<div class="mx-auto w-full max-w-md px-4 sm:px-6 lg:px-8">
+    <div class="py-12">
 
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bi bi-exclamation-triangle"></i> <?php echo sanitizeOutput($error); ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <?php endif; ?>
+        <div class="mb-6 text-center">
+            <div class="text-[11px] font-mono text-zinc-500">
+                <span class="text-emerald-400">$</span> sh_ auth --login
+            </div>
+            <h1 class="mt-3 text-2xl font-semibold tracking-tight text-zinc-100">Client Portal</h1>
+            <p class="mt-1 text-sm text-zinc-400">Sign in to access your account</p>
+        </div>
 
-                        <!-- Fix: Changed action to login.php so it handles its own logic -->
-                    <form action="login.php" method="POST" id="loginForm">
-                        <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
+        <?php if ($error): ?>
+            <div class="mb-5 rounded-2xl border border-red-900/50 bg-red-950/40 p-4 text-sm text-red-200">
+                <div class="font-medium">Login failed</div>
+                <div class="mt-1"><?= sanitizeOutput($error) ?></div>
+            </div>
+        <?php endif; ?>
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input
-                                        type="email"
-                                        class="form-control"
-                                        id="email"
-                                        name="email"
-                                        required
-                                        placeholder="you@example.com"
-                                        autocomplete="username"
-                                        value="<?php echo isset($email) ? sanitizeOutput($email) : ''; ?>"
-                                >
-                            </div>
-                        </div>
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-6 shadow-sm">
+            <form action="login.php" method="POST" class="space-y-4" id="loginForm">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Auth::generateCsrfToken()); ?>">
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input
-                                        type="password"
-                                        class="form-control"
-                                        id="password"
-                                        name="password"
-                                        required
-                                        placeholder="Enter your password"
-                                        autocomplete="current-password"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Remember me</label>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right"></i> Sign In
-                            </button>
-                        </div>
-                    </form>
-
-
-                    <hr class="my-4">
-
-                        <div class="text-center mb-3">
-                            <p class="mb-1">Don't have an account yet?</p>
-                            <a href="user_registration.php" class="btn btn-outline-success">Create Guild Account</a>
-                        </div>
-
-                    <div class="text-center">
-                        <p class="text-muted small mb-2">Forgot your password?</p>
-                        <a href="<?php echo SITE_URL; ?>/contact.php" class="text-decoration-none">Contact Support</a>
-                    </div>
-
-                    <div class="alert alert-info mt-4" role="alert">
-                        <strong>Demo Account:</strong><br>
-                        Email: demo@example.com<br>
-                        Password: Demo123!
-                    </div>
+                <div>
+                    <label for="email" class="block text-sm text-zinc-300">Email</label>
+                    <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            autocomplete="username"
+                            placeholder="you@example.com"
+                            value="<?= htmlspecialchars($email) ?>"
+                            class="mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-600"
+                    >
                 </div>
+
+                <div>
+                    <label for="password" class="block text-sm text-zinc-300">Password</label>
+                    <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                            class="mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-600"
+                    >
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                    <label class="inline-flex items-center gap-2 text-sm text-zinc-400">
+                        <input type="checkbox" name="remember" class="h-4 w-4 rounded border-zinc-700 bg-zinc-950">
+                        Remember me
+                    </label>
+
+                    <a href="<?= (defined('SITE_URL') ? SITE_URL : '') ?>/contact.php"
+                       class="text-sm text-zinc-400 hover:text-zinc-200 hover:underline">
+                        Need help?
+                    </a>
+                </div>
+
+                <button type="submit"
+                        class="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white">
+                    Sign In →
+                </button>
+            </form>
+
+            <div class="mt-6 border-t border-zinc-800 pt-5 text-center">
+                <p class="text-sm text-zinc-400">Don’t have an account yet?</p>
+                <a href="user_registration.php"
+                   class="mt-3 inline-flex items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2 text-sm text-zinc-100 hover:border-zinc-700">
+                    Create Guild Account
+                </a>
             </div>
         </div>
+
+        <div class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4 text-xs text-zinc-400">
+            <div class="font-mono text-zinc-500 mb-2">demo://account</div>
+            <div><span class="text-zinc-300">Email:</span> demo@example.com</div>
+            <div><span class="text-zinc-300">Password:</span> Demo123!</div>
+        </div>
+
     </div>
 </div>
 

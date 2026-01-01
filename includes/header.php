@@ -8,12 +8,16 @@
  *  - $isLoggedIn (optional)
  */
 
-// Safe defaults for template vars (keeps IDE happy too)
+// Safe defaults for template vars
 $pageTitle   = $pageTitle   ?? '';
 $currentPage = $currentPage ?? '';
-$isLoggedIn  = $isLoggedIn  ?? (class_exists('\MSPGuild\Core\Auth') ? \MSPGuild\Core\Auth::isLoggedIn() : (isset($_SESSION['user_id'])));
+$currentPage = strtolower(trim((string)$currentPage));
 
-// Helpful URL fallbacks (won't fatal if constants aren't defined yet)
+$isLoggedIn  = $isLoggedIn  ?? (class_exists('\MSPGuild\Core\Auth')
+        ? \MSPGuild\Core\Auth::isLoggedIn()
+        : (isset($_SESSION['user_id'])));
+
+// Helpful URL fallbacks
 $frontdeskUrl = defined('FRONTDESK_URL') ? FRONTDESK_URL : (defined('SITE_URL') ? SITE_URL . '/modules/frontdesk/index.php' : '/modules/frontdesk/index.php');
 $resumeUrl    = defined('RESUME_URL') ? RESUME_URL : '#';
 $siteName     = defined('SITE_NAME') ? SITE_NAME : 'MSPGuild';
@@ -22,15 +26,21 @@ $siteUrl      = defined('SITE_URL') ? SITE_URL : '';
 
 // Badge logic (shell context)
 if (!$isLoggedIn) {
-    $badgeCmd = 'sh_ auth --login';
+    // logged out contexts
+    $badgeCmd = match ($currentPage) {
+        'register' => 'sh_ auth --register',
+        'contact'  => 'sh_ contact --send',
+        default    => 'sh_ auth --login',
+    };
 } else {
-    $badgeCmd = 'sh_ dashboard --status';
-
-    if ($currentPage === 'frontdesk') {
-        $badgeCmd = 'sh_ frontdesk --tickets';
-    } elseif ($currentPage === 'profile') {
-        $badgeCmd = 'sh_ user --profile';
-    }
+    // logged in contexts
+    $badgeCmd = match ($currentPage) {
+        'frontdesk' => 'sh_ frontdesk --tickets',
+        'dashboard' => 'sh_ dashboard --status',
+        'profile'   => 'sh_ user --profile',
+        'contact'   => 'sh_ contact --send',
+        default     => 'sh_ dashboard --status',
+    };
 }
 ?>
 <!DOCTYPE html>
