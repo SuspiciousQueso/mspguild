@@ -20,7 +20,8 @@ function sanitizeOutput($data) {
 /**
  * Register a new user
  */
-function registerUser($data) {
+function registerUser($data)
+{
     $pdo = Database::getConnection();
 
     // ... email check ...
@@ -47,7 +48,8 @@ function registerUser($data) {
         /**
          * Authenticate a user
          */
-        function authenticateUser($email, $password) {
+        function authenticateUser($email, $password)
+        {
             $pdo = Database::getConnection();
             // Fixed: Changed column name to 'password_hash'
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1");
@@ -59,3 +61,5 @@ function registerUser($data) {
             }
             return false;
         }
+    }
+}
