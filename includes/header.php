@@ -76,7 +76,14 @@ $isLoggedIn  = $isLoggedIn  ?? false;
                     <?php endif; ?>
                 </ul>
 
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'register' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_registration.php"><i class="bi bi-person-plus"></i>Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php"><i class="bi bi-box-arrow-in-right"></i>Login</a>
+                    </li>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
-<?php endif; ?>
