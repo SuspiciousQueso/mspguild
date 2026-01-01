@@ -126,3 +126,4 @@ $isLoggedIn  = $isLoggedIn  ?? false;
             </div>
         </div>
     </nav>
+<?php endif; ?>
