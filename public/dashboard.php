@@ -3,8 +3,11 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 $pageTitle = 'Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 
-// Require authentication
-requireAuth();
+require_once __DIR__ . '/../includes/bootstrap.php';
+
+use MSPGuild\Core\Auth;
+
+Auth::requireAuth();
 
 $user = getCurrentUser();
 if (!$user) {
