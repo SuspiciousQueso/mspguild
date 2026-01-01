@@ -11,7 +11,7 @@ $isLoggedIn = Auth::isLoggedIn();
 
 include __DIR__ . '/../includes/header.php';
 ?>
-
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/public/assets/css/custom.css">
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-lg-6">
