@@ -17,8 +17,9 @@ const SUPPORT_PHONE = '(555) 123-4567';
 const SITE_TAGLINE = 'Where we find the way';
 
 // 3. Module URLs
-const TICKET_SYSTEM_URL = SITE_URL . '/ticketing/index.php';
+const TICKET_SYSTEM_URL = SITE_URL . 'https://jobs.mspguild.tech/';
 const KNOWLEDGE_BASE_URL = SITE_URL . '/kb/index.php';
+const RESUME_URL = '#';
 
 // 4. Security Settings
 const CSRF_TOKEN_NAME = 'csrf_token';

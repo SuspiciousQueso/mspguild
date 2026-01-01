@@ -2,6 +2,8 @@
 /**
  * MSPGuild Global Bootstrap
  */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -21,10 +23,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 // Load helper functions
 require_once __DIR__ . '/functions.php';
-// Load helper functions
+
+use MSPGuild\Core\Auth;
+
 // Start Session using the secure function defined in Auth.php
-if (function_exists('startSecureSession')) {
-    startSecureSession();
-} elseif (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+Auth::startSecureSession();
