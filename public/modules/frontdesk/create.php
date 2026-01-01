@@ -1,68 +1,56 @@
 <?php
 require_once __DIR__ . '/../../../includes/bootstrap.php';
+require_once __DIR__ . '/../../../includes/modules/frontdesk/functions.php';
 
 use MSPGuild\Core\Auth;
 
 Auth::requireAuth();
 
 $user = Auth::getCurrentUser();
-$error = '';
-
-function createTicket(int $userId, array $data)
-{
-    $pdo = \MSPGuild\Core\Database::getConnection();
-
-    // 1) Get user site_id
-    $stmt = $pdo->prepare("SELECT site_id FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
-    $userRow = $stmt->fetch();
-    $siteId = (int)($userRow['site_id'] ?? 1);
-
-    // 2) Get site code
-    $stmt = $pdo->prepare("SELECT code FROM sites WHERE id = ?");
-    $stmt->execute([$siteId]);
-    $site = $stmt->fetch();
-    $siteCode = $site['code'] ?? 'GUILD';
-
-    // 3) Default queue: frontdesk
-    $stmt = $pdo->prepare("SELECT id FROM queues WHERE site_id = ? AND slug = 'frontdesk' LIMIT 1");
-    $stmt->execute([$siteId]);
-    $queue = $stmt->fetch();
-    $queueId = (int)($queue['id'] ?? 0);
-
-    $ticketType = $data['ticket_type'] ?? 'R';
-
-    // 4) Insert ticket
-    $stmt = $pdo->prepare("
-        INSERT INTO tickets (user_id, site_id, queue_id, ticket_type, subject, description, priority, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'open')
-    ");
-
-    $ok = $stmt->execute([
-            $userId,
-            $siteId,
-            $queueId ?: null,
-            $ticketType,
-            $data['subject'],
-            $data['description'],
-            $data['priority'] ?? 'medium'
-    ]);
-
-    if (!$ok) {
-        return false;
-    }
-
-    $ticketId = (int)$pdo->lastInsertId();
-
-    // 5) Generate ticket_number: SITE-TYPE-000123
-    $ticketNumber = sprintf('%s-%s-%06d', $siteCode, $ticketType, $ticketId);
-
-    $stmt = $pdo->prepare("UPDATE tickets SET ticket_number = ? WHERE id = ?");
-    $stmt->execute([$ticketNumber, $ticketId]);
-
-    return $ticketId;
+if (!$user) {
+    header("Location: " . SITE_URL . "/login.php");
+    exit;
 }
 
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf = $_POST['csrf_token'] ?? '';
+
+    if (!Auth::verifyCsrfToken($csrf)) {
+        $error = "Invalid security token.";
+    } else {
+        $subject = trim($_POST['subject'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $priority = $_POST['priority'] ?? 'medium';
+        $ticketType = $_POST['ticket_type'] ?? 'R';
+
+        $allowedPriorities = ['low','medium','high','emergency'];
+        if (!in_array($priority, $allowedPriorities, true)) {
+            $priority = 'medium';
+        }
+
+        if ($subject === '' || $description === '') {
+            $error = "Subject and description are required.";
+        } elseif (!in_array($ticketType, ['R', 'T'], true)) {
+            $error = "Invalid ticket type.";
+        } else {
+            $ticketId = createTicket((int)$user['id'], [
+                    'subject' => $subject,
+                    'description' => $description,
+                    'priority' => $priority,
+                    'ticket_type' => $ticketType,
+            ]);
+
+            if ($ticketId) {
+                header("Location: view.php?id=" . (int)$ticketId . "&created=1");
+                exit;
+            }
+
+            $error = "Failed to create ticket. Please try again.";
+        }
+    }
+}
 
 $pageTitle = "Open Ticket";
 $currentPage = 'frontdesk';

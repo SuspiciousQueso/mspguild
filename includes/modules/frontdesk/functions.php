@@ -34,19 +34,64 @@ function getTicketById($ticketId, $userId) {
 /**
  * Create a new support ticket
  */
-function createTicket($userId, $data) {
-    $pdo = Database::getConnection();
-    $sql = "INSERT INTO tickets (user_id, subject, description, priority, status) VALUES (?, ?, ?, ?, 'open')";
+function createTicket(int $userId, array $data)
+{
+    $pdo = \MSPGuild\Core\Database::getConnection();
+
+    // 1) Determine site_id for the user (default to 1 if missing)
+    $stmt = $pdo->prepare("SELECT site_id FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $userRow = $stmt->fetch();
+    $siteId = (int)($userRow['site_id'] ?? 1);
+
+    // 2) Get site code (default to GUILD)
+    $stmt = $pdo->prepare("SELECT code FROM sites WHERE id = ?");
+    $stmt->execute([$siteId]);
+    $siteRow = $stmt->fetch();
+    $siteCode = $siteRow['code'] ?? 'GUILD';
+
+    // 3) Get default FrontDesk queue for the site (slug=frontdesk)
+    $stmt = $pdo->prepare("SELECT id FROM queues WHERE site_id = ? AND slug = 'frontdesk' LIMIT 1");
+    $stmt->execute([$siteId]);
+    $queueRow = $stmt->fetch();
+    $queueId = isset($queueRow['id']) ? (int)$queueRow['id'] : null;
+
+    // 4) Validate ticket type
+    $ticketType = $data['ticket_type'] ?? 'R';
+    if (!in_array($ticketType, ['R', 'T'], true)) {
+        $ticketType = 'R';
+    }
+
+    // 5) Insert the ticket (no ticket_number yet)
+    $sql = "
+        INSERT INTO tickets (user_id, site_id, queue_id, ticket_type, subject, description, priority, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'open')
+    ";
     $stmt = $pdo->prepare($sql);
 
-    $result = $stmt->execute([
+    $ok = $stmt->execute([
         $userId,
+        $siteId,
+        $queueId, // can be null
+        $ticketType,
         $data['subject'],
         $data['description'],
         $data['priority'] ?? 'medium'
     ]);
 
-    return $result ? $pdo->lastInsertId() : false;
+    if (!$ok) {
+        return false;
+    }
+
+    $ticketId = (int)$pdo->lastInsertId();
+
+    // 6) Generate ticket_number: SITE-TYPE-000123
+    $ticketNumber = sprintf('%s-%s-%06d', $siteCode, $ticketType, $ticketId);
+
+    $stmt = $pdo->prepare("UPDATE tickets SET ticket_number = ? WHERE id = ?");
+    $stmt->execute([$ticketNumber, $ticketId]);
+
+    return $ticketId;
 }
 
 function getTicketMessages($ticketId) {
