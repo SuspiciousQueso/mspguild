@@ -22,21 +22,21 @@ include __DIR__ . '/../includes/header.php';
                 <h1 class="display-5 fw-bold">Get in Touch</h1>
                 <p class="lead text-muted">We're here to help with all your IT needs. Send us a message and we'll respond promptly.</p>
             </div>
-
-            <?php if ($success): ?>
+<!--
+            <?php // if ($success): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle"></i> <?php echo sanitizeOutput($success); ?>
+                    <i class="bi bi-check-circle"></i> <?php //echo sanitizeOutput($success); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-            <?php endif; ?>
+            <?php // endif; ?>
 
-            <?php if ($error): ?>
+            <?php // if ($error): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i> <?php echo sanitizeOutput($error); ?>
+                    <i class="bi bi-exclamation-triangle"></i> <?php //echo sanitizeOutput($error); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-            <?php endif; ?>
-
+            <?php //endif; ?>
+-->
             <div class="card shadow-lg border-0">
                 <div class="card-body p-5">
                     <form action="<?php echo SITE_URL; ?>/../api/contact_handler.php" method="POST" id="contactForm">
