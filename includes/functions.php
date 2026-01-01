@@ -22,20 +22,16 @@ function sanitizeOutput($data) {
  */
 function registerUser($data) {
     $pdo = Database::getConnection();
-    
-    // Check if email already exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([$data['email']]);
-    if ($stmt->fetch()) {
-        return false;
-    }
+
+    // ... email check ...
 
     $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
-    
-    $sql = "INSERT INTO users (email, password, full_name, company_name, contact_phone, service_tier) 
+
+    // Fixed: Changed 'password' column to 'password_hash' to match schema.sql
+    $sql = "INSERT INTO users (email, password_hash, full_name, company_name, contact_phone, service_tier) 
             VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql);
-    
+
     try {
         $result = $stmt->execute([
             $data['email'],
@@ -43,26 +39,23 @@ function registerUser($data) {
             $data['full_name'],
             $data['company_name'] ?? null,
             $data['contact_phone'] ?? null,
-            $data['service_tier'] ?? 'basic'
+            $data['service_tier'] ?? 'Basic'
         ]);
         return $result ? $pdo->lastInsertId() : false;
     } catch (PDOException $e) {
-        error_log("Registration error: " . $e->getMessage());
-        return false;
-    }
-}
+// ... existing code ...
+        /**
+         * Authenticate a user
+         */
+        function authenticateUser($email, $password) {
+            $pdo = Database::getConnection();
+            // Fixed: Changed column name to 'password_hash'
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
 
-/**
- * Authenticate a user
- */
-function authenticateUser($email, $password) {
-    $pdo = Database::getConnection();
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($password, $user['password'])) {
-        return $user;
-    }
-    return false;
-}
+            if ($user && password_verify($password, $user['password_hash'])) {
+                return $user;
+            }
+            return false;
+        }
