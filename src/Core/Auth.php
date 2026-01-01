@@ -91,5 +91,36 @@ class Auth {
 
         return false;
     }
+    public static function logout()
+    {
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Unset all session variables
+        $_SESSION = [];
+
+        // Delete session cookie
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        // Destroy session
+        session_destroy();
+
+        // Regenerate session ID to prevent fixation
+        session_regenerate_id(true);
+    }
+
 }
 
