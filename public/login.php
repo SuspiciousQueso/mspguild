@@ -13,13 +13,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!Auth::verifyCsrfToken($csrf_token)) {
         $error = "Invalid security token.";
     } else {
-        // ... existing login logic ...
+        // Use the authenticateUser function we added to includes/functions.php
+        $user = authenticateUser($email, $password);
+        
+        if ($user) {
+            Auth::loginUser($user);
+            
+            // Redirect to dashboard or the page they were trying to reach
+            $redirect = $_SESSION['redirect_after_login'] ?? 'dashboard.php';
+            unset($_SESSION['redirect_after_login']);
+            header("Location: " . $redirect);
+            exit;
+        } else {
+            $error = "Invalid email or password.";
+        }
     }
 }
 
 $pageTitle = "Login";
-$currentPage = 'login';
-$isLoggedIn = Auth::isLoggedIn();
 
 include __DIR__ . '/../includes/header.php';
 ?>
@@ -42,17 +53,9 @@ include __DIR__ . '/../includes/header.php';
                         </div>
                     <?php endif; ?>
 
-                    <form action="<?php echo SITE_URL; ?>/../api/login_handler.php" method="POST" id="loginForm">
-                        <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" required
-                                       placeholder="you@example.com" autocomplete="email">
-                            </div>
-                        </div>
+                        <!-- Fix: Changed action to login.php so it handles its own logic -->
+                        <form action="login.php" method="POST" id="loginForm">
+                            <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
