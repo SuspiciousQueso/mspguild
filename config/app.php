@@ -21,6 +21,9 @@ const TICKET_SYSTEM_URL = SITE_URL . '/modules/ticketing/index.php';
 const KNOWLEDGE_BASE_URL = SITE_URL . '/kb/index.php';
 const RESUME_URL = '#';
 
+const FRONTDESK_URL = SITE_URL . '/modules/frontdesk/index.php';
+
+
 // 4. Security Settings
 const CSRF_TOKEN_NAME = 'csrf_token';
 
