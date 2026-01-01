@@ -1,108 +1,93 @@
 <?php
-require_once __DIR__ . '/../../includes/modules/ticketing/functions.php';
+require_once __DIR__ . '/../../../includes/bootstrap.php';
+require_once __DIR__ . '/../../../includes/modules/ticketing/functions.php';
 
-requireAuth();
-$user = getCurrentUser();
+use MSPGuild\Core\Auth;
 
-// Module check
-if (!defined('ENABLE_TICKETING') || !ENABLE_TICKETING) {
-    header("Location: ../index.php");
-    exit;
-}
-
+Auth::requireAuth();
+$user = Auth::getCurrentUser();
 $error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Basic CSRF check if you have it implemented, or just standard POST handling
-    $data = [
-        'subject' => trim($_POST['subject'] ?? ''),
-        'description' => trim($_POST['description'] ?? ''),
-        'priority' => $_POST['priority'] ?? 'medium'
-    ];
 
-    if (empty($data['subject']) || empty($data['description'])) {
-        $error = "Subject and Description are required.";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!Auth::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $error = "Invalid security token.";
     } else {
-        $ticketId = createTicket($user['id'], $data);
-        if ($ticketId) {
-            // Success! Redirect to the new ticket view
-            header("Location: view.php?id=" . $ticketId);
-            exit;
+        $ticketData = [
+            'subject' => $_POST['subject'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'priority' => $_POST['priority'] ?? 'medium'
+        ];
+
+        if (empty($ticketData['subject']) || empty($ticketData['description'])) {
+            $error = "Subject and Description are required.";
         } else {
-            $error = "Database error: Could not create ticket.";
+            $ticketId = createTicket($user['id'], $ticketData);
+            if ($ticketId) {
+                header("Location: view.php?id=" . $ticketId . "&created=1");
+                exit;
+            } else {
+                $error = "Failed to create ticket. Please try again.";
+            }
         }
     }
 }
 
 $pageTitle = "Open New Ticket";
-include __DIR__ . '/../../includes/header.php';
+$currentPage = 'ticketing';
+$isLoggedIn = true;
+include __DIR__ . '/../../../includes/header.php';
 ?>
 
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Tickets</a></li>
-            <li class="breadcrumb-item active">New Ticket</li>
-        </ol>
-    </nav>
-
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white p-3">
-                    <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Open a New Support Ticket</h4>
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.php">Tickets</a></li>
+                    <li class="breadcrumb-item active">New Ticket</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Submit Support Request</h4>
                 </div>
                 <div class="card-body p-4">
                     <?php if ($error): ?>
-                        <div class="alert alert-danger"><?php echo sanitizeOutput($error); ?></div>
+                        <div class="alert alert-danger"><?php echo $error; ?></div>
                     <?php endif; ?>
 
-                    <form method="POST" action="create.php">
-                        <div class="mb-4">
-                            <label for="subject" class="form-label fw-bold">Subject</label>
-                            <input type="text" name="subject" id="subject" class="form-control form-control-lg" 
-                                   required placeholder="e.g., Cannot access email on mobile">
-                            <div class="form-text">A brief summary of the issue you're experiencing.</div>
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" name="subject" class="form-control" placeholder="Brief summary of the issue" required>
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label for="priority" class="form-label fw-bold">Priority Level</label>
-                                <select name="priority" id="priority" class="form-select">
-                                    <option value="low">Low - General Inquiry</option>
-                                    <option value="medium" selected>Medium - Standard Support</option>
-                                    <option value="high">High - Critical Issue</option>
-                                    <option value="emergency">Emergency - System Down</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Department</label>
-                                <input type="text" class="form-control" value="Technical Support" disabled>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-select">
+                                <option value="low">Low - General Inquiry</option>
+                                <option value="medium" selected>Medium - Normal Support</option>
+                                <option value="high">High - Impacting Work</option>
+                                <option value="emergency">Emergency - System Down</option>
+                            </select>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="description" class="form-label fw-bold">Issue Details</label>
-                            <textarea name="description" id="description" rows="8" class="form-control" 
-                                      required placeholder="Please describe the steps to reproduce the issue..."></textarea>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="6" placeholder="Please provide as much detail as possible..." required></textarea>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center border-top pt-3">
-                            <a href="index.php" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-lg me-1"></i> Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary btn-lg px-4">
-                                Submit Ticket <i class="bi bi-send ms-1"></i>
-                            </button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit Ticket</button>
                         </div>
                     </form>
                 </div>
-            </div>
-            
-            <div class="mt-4 text-center text-muted">
-                <small><i class="bi bi-info-circle me-1"></i> Typical response time is within 4 hours during business hours.</small>
             </div>
         </div>
     </div>
 </div>
 
-<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../../includes/footer.php'; ?>

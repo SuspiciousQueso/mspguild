@@ -78,10 +78,10 @@ function addTicketComment($ticketId, $userId, $comment) {
  */
 function getStatusBadgeClass($status) {
     switch ($status) {
-        case 'open': return 'badge-primary';
-        case 'in-progress': return 'badge-info';
-        case 'waiting-on-client': return 'badge-warning';
-        case 'closed': return 'badge-secondary';
-        default: return 'badge-light';
+        case 'open': return 'bg-primary';
+        case 'in-progress': return 'bg-info text-dark';
+        case 'waiting-on-client': return 'bg-warning text-dark';
+        case 'closed': return 'bg-secondary';
+        default: return 'bg-light text-dark';
     }
 }
