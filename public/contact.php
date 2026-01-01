@@ -1,22 +1,18 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
-$pageTitle = 'Contact Us';
-require_once __DIR__ . '/../includes/header.php';
 
-$success = '';
-$error = '';
+use MSPGuild\Core\Auth;
 
-if (isset($_SESSION['contact_success'])) {
-    $success = $_SESSION['contact_success'];
-    unset($_SESSION['contact_success']);
-}
+$pageTitle = "Contact Us";
+$currentPage = 'contact';
+$isLoggedIn = Auth::isLoggedIn();
 
-if (isset($_SESSION['contact_error'])) {
-    $error = $_SESSION['contact_error'];
-    unset($_SESSION['contact_error']);
-}
+// ... existing logic (like form handling) ...
 
-$csrfToken = generateCsrfToken();
+// When you need the token in the form:
+// $token = Auth::generateCsrfToken();
+
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container py-5">
