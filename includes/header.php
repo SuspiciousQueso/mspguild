@@ -40,11 +40,14 @@ $siteUrl      = defined('SITE_URL') ? SITE_URL : '';
         <a href="<?php echo $siteUrl; ?>/index.php"
            class="text-2xl font-black tracking-tighter text-emerald-400 uppercase">
             <?php echo sanitizeOutput($siteName); ?>
-        </a>// Badge logic (shell context)  if (!$isLoggedIn) { $badgeCmd = 'sh_ auth --login'; } else {
+        </a>
+        <!-- // Badge logic (shell context)
+        if (!$isLoggedIn) { $badgeCmd = 'sh_ auth --login'; } else {
+
         // Default when logged in $badgeCmd = 'sh_ dashboard --status';
         // Optional: context-aware overrides if ($currentPage === 'frontdesk') { $badgeCmd = 'sh_ frontdesk --tickets';
         } elseif ($currentPage === 'profile') { $badgeCmd = 'sh_ user --profile'; } } ?>
-
+        -->
         <div class="hidden md:flex items-center bg-slate-800 border border-slate-700 rounded px-3 py-1
             text-[10px] font-mono text-slate-400">
             <?php echo sanitizeOutput($badgeCmd); ?>
