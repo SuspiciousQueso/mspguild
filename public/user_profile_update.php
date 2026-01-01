@@ -1,7 +1,10 @@
 <?php
-require_once __DIR__ . '/../src/Core/Auth.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
-// Ensure the user is logged in
+use MSPGuild\Core\Auth;
+use MSPGuild\Core\Database;
+
+// Require login
 Auth::requireAuth();
 
 $user = getCurrentUser();
