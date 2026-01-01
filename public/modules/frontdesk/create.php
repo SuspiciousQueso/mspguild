@@ -14,32 +14,40 @@ if (!$user) {
 
 $error = '';
 
+// Defaults (so the form is sticky on errors)
+$form = [
+        'ticket_type' => 'R',
+        'priority'    => 'medium',
+        'subject'     => '',
+        'description' => '',
+];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrf = $_POST['csrf_token'] ?? '';
+
+    $form['ticket_type'] = $_POST['ticket_type'] ?? 'R';
+    $form['priority']    = $_POST['priority'] ?? 'medium';
+    $form['subject']     = trim($_POST['subject'] ?? '');
+    $form['description'] = trim($_POST['description'] ?? '');
 
     if (!Auth::verifyCsrfToken($csrf)) {
         $error = "Invalid security token.";
     } else {
-        $subject = trim($_POST['subject'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $priority = $_POST['priority'] ?? 'medium';
-        $ticketType = $_POST['ticket_type'] ?? 'R';
-
         $allowedPriorities = ['low','medium','high','emergency'];
-        if (!in_array($priority, $allowedPriorities, true)) {
-            $priority = 'medium';
+        if (!in_array($form['priority'], $allowedPriorities, true)) {
+            $form['priority'] = 'medium';
         }
 
-        if ($subject === '' || $description === '') {
+        if ($form['subject'] === '' || $form['description'] === '') {
             $error = "Subject and description are required.";
-        } elseif (!in_array($ticketType, ['R', 'T'], true)) {
+        } elseif (!in_array($form['ticket_type'], ['R', 'T'], true)) {
             $error = "Invalid ticket type.";
         } else {
             $ticketId = createTicket((int)$user['id'], [
-                    'subject' => $subject,
-                    'description' => $description,
-                    'priority' => $priority,
-                    'ticket_type' => $ticketType,
+                    'subject'     => $form['subject'],
+                    'description' => $form['description'],
+                    'priority'    => $form['priority'],
+                    'ticket_type' => $form['ticket_type'],
             ]);
 
             if ($ticketId) {
@@ -52,80 +60,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pageTitle = "Open Ticket";
+$pageTitle   = "Open Ticket";
 $currentPage = 'frontdesk';
-$isLoggedIn = true;
+$isLoggedIn  = true;
 
 include __DIR__ . '/../../../includes/header.php';
 ?>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+<div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div class="py-10">
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0"><i class="bi bi-inbox"></i> FrontDesk</h1>
-                <a href="index.php" class="btn btn-outline-light text-dark border">
-                    Back to Tickets
-                </a>
+        <!-- Page header -->
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-semibold tracking-tight text-zinc-100">FrontDesk</h1>
+                <p class="mt-1 text-sm text-zinc-400">Open a new ticket. Keep it tight, keep it useful.</p>
             </div>
 
-            <?php if ($error): ?>
-                <div class="alert alert-danger"><?php echo sanitizeOutput($error); ?></div>
-            <?php endif; ?>
-
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <strong>New Ticket</strong>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="create.php">
-                        <input type="hidden" name="csrf_token" value="<?php echo Auth::generateCsrfToken(); ?>">
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Ticket Type</label>
-                                <select name="ticket_type" class="form-select" required>
-                                    <option value="R" selected>Request (R)</option>
-                                    <option value="T">Trouble / Incident (T)</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Priority</label>
-                                <select name="priority" class="form-select">
-                                    <option value="low">Low</option>
-                                    <option value="medium" selected>Medium</option>
-                                    <option value="high">High</option>
-                                    <option value="emergency">Emergency</option>
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Subject</label>
-                                <input type="text" name="subject" class="form-control" required maxlength="255"
-                                       placeholder="Short summary of the issue">
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="6" required
-                                          placeholder="Details, errors, steps, impact, screenshots, etc."></textarea>
-                            </div>
-
-                            <div class="col-12 d-grid">
-                                <button class="btn btn-primary btn-lg" type="submit">
-                                    Submit Ticket
-                                </button>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<?php include __DIR__ . '/../../../includes/footer.php'; ?>
+            <div class="flex flex-wrap gap-2">
+                <a href="index.php"
+                   class="inline-fl
