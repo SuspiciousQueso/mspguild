@@ -93,7 +93,7 @@ class Auth {
     }
     public static function logout()
     {
-        // Start session if not already started
+        // Ensure we have a session
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -110,17 +110,23 @@ class Auth {
                 time() - 42000,
                 $params["path"],
                 $params["domain"],
-                $params["secure"],
-                $params["httponly"]
+                $params["secure"] ?? false,
+                $params["httponly"] ?? true
             );
         }
 
-        // Destroy session
-        session_destroy();
+        /**
+         * Regenerate session ID BEFORE destroying the session
+         * (prevents fixation and avoids "no active session" warning)
+         */
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            @session_regenerate_id(true);
+        }
 
-        // Regenerate session ID to prevent fixation
-        session_regenerate_id(true);
+        // Now destroy the session
+        session_destroy();
     }
+
 
 }
 
