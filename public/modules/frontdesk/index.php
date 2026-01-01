@@ -48,7 +48,7 @@ include __DIR__ . '/../../../includes/header.php';
                         <?php foreach ($tickets as $ticket): ?>
                             <tr>
                                 <td>#<?php echo $ticket['id']; ?></td>
-                                <td><strong><?php echo sanitizeOutput($ticket['subject']); ?></strong></td>
+                                <td><strong><?php echo sanitizeOutput($ticket['ticket_number'] ?? ('#' . $ticket['id'])); ?></strong></td>
                                 <td>
                                     <span class="badge <?php echo getStatusBadgeClass($ticket['status']); ?>">
                                         <?php echo ucfirst($ticket['status']); ?>
