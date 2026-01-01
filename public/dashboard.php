@@ -1,44 +1,106 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
-use MSPGuild\Core\Auth;
+// Page metadata MUST be set before header include
+$pageTitle    = 'Dashboard';
+$currentPage  = 'dashboard';
 
-// Protect the page
-Auth::requireAuth();
+// Keep naming consistent with header.php
+$isLoggedIn = (class_exists('\MSPGuild\Core\Auth'))
+        ? \MSPGuild\Core\Auth::isLoggedIn()
+        : isset($_SESSION['user_id']);
 
-$pageTitle   = "Dashboard";
-$currentPage = 'dashboard';
-$isLoggedIn  = true;
+// Tenant/site (fallback to default)
+$site_code = $_SESSION['site_code'] ?? 'GUILD';
 
-$user = Auth::getCurrentUser();
+// Placeholder stats (wire later)
+$stats = $stats ?? [
+        'open_tickets' => 0,
+        'my_queues'    => 0,
+        'sites'        => 1,
+];
 
-include __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="container py-5">
-    <h1 class="mb-4">Welcome, <?php echo sanitizeOutput($user['full_name']); ?> 👋</h1>
+<div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="py-10">
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-semibold tracking-tight text-zinc-100">Dashboard</h1>
+                <p class="mt-1 text-sm text-zinc-400">Status, quick actions, and what needs attention.</p>
+            </div>
 
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">FrontDesk</h5>
-                    <p class="card-text">View and manage your support requests.</p>
-                    <a href="<?php echo FRONTDESK_URL; ?>" class="btn btn-primary">Go to FrontDesk</a>
-                </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="/modules/frontdesk/create.php"
+                   class="inline-flex items-center rounded-lg bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-900 hover:bg-white">
+                    + New Ticket
+                </a>
+                <a href="/modules/frontdesk/"
+                   class="inline-flex items-center rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 hover:border-zinc-700">
+                    FrontDesk
+                </a>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Profile</h5>
-                    <p class="card-text">Update your account information.</p>
-                    <a href="<?php echo SITE_URL; ?>/user_profile_update.php" class="btn btn-outline-secondary">Manage Profile</a>
+        <div class="mb-6 flex flex-wrap items-center gap-2">
+            <?php if (!$isLoggedIn): ?>
+                <span class="rounded-full border border-zinc-800 bg-zinc-950 px-3 py-1 text-xs text-zinc-300">sh_ auth --login</span>
+            <?php else: ?>
+                <span class="rounded-full border border-zinc-800 bg-zinc-950 px-3 py-1 text-xs text-zinc-300">sh_ dashboard --status</span>
+                <span class="text-xs text-zinc-500">•</span>
+                <span class="text-xs text-zinc-500">
+                    Tenant: <span class="text-zinc-300"><?= htmlspecialchars($site_code) ?></span>
+                </span>
+            <?php endif; ?>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5">
+                <div class="text-sm text-zinc-400">Open tickets</div>
+                <div class="mt-2 text-3xl font-semibold text-zinc-100"><?= (int)$stats['open_tickets'] ?></div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5">
+                <div class="text-sm text-zinc-400">Queues I can access</div>
+                <div class="mt-2 text-3xl font-semibold text-zinc-100"><?= (int)$stats['my_queues'] ?></div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5">
+                <div class="text-sm text-zinc-400">Sites</div>
+                <div class="mt-2 text-3xl font-semibold text-zinc-100"><?= (int)$stats['sites'] ?></div>
+            </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-medium text-zinc-200">Quick actions</h2>
                 </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <a href="/modules/frontdesk/create.php"
+                       class="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 hover:border-zinc-700">
+                        Create ticket
+                    </a>
+                    <a href="/modules/frontdesk/"
+                       class="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 hover:border-zinc-700">
+                        View tickets
+                    </a>
+                    <a href="/user_profile_update.php"
+                       class="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 hover:border-zinc-700">
+                        Profile
+                    </a>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5">
+                <h2 class="text-sm font-medium text-zinc-200">Activity</h2>
+                <p class="mt-2 text-sm text-zinc-400">
+                    Placeholder for “recent tickets”, “recent replies”, etc. We’ll wire this after the FrontDesk list is converted.
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

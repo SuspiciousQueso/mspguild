@@ -19,6 +19,19 @@ $resumeUrl    = defined('RESUME_URL') ? RESUME_URL : '#';
 $siteName     = defined('SITE_NAME') ? SITE_NAME : 'MSPGuild';
 $tagline      = defined('SITE_TAGLINE') ? SITE_TAGLINE : '';
 $siteUrl      = defined('SITE_URL') ? SITE_URL : '';
+
+// Badge logic (shell context)
+if (!$isLoggedIn) {
+    $badgeCmd = 'sh_ auth --login';
+} else {
+    $badgeCmd = 'sh_ dashboard --status';
+
+    if ($currentPage === 'frontdesk') {
+        $badgeCmd = 'sh_ frontdesk --tickets';
+    } elseif ($currentPage === 'profile') {
+        $badgeCmd = 'sh_ user --profile';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full">
@@ -36,23 +49,21 @@ $siteUrl      = defined('SITE_URL') ? SITE_URL : '';
 <body class="h-full bg-slate-900 text-slate-200 flex flex-col m-0 p-0 overflow-hidden">
 
 <nav class="w-full bg-slate-900 px-6 py-3 flex justify-between items-center z-50 border-b border-slate-800 shrink-0">
+
+    <!-- Left: brand + badge -->
     <div class="flex items-center gap-6">
         <a href="<?php echo $siteUrl; ?>/index.php"
            class="text-2xl font-black tracking-tighter text-emerald-400 uppercase">
             <?php echo sanitizeOutput($siteName); ?>
         </a>
-        <!-- // Badge logic (shell context)
-        if (!$isLoggedIn) { $badgeCmd = 'sh_ auth --login'; } else {
 
-        // Default when logged in $badgeCmd = 'sh_ dashboard --status';
-        // Optional: context-aware overrides if ($currentPage === 'frontdesk') { $badgeCmd = 'sh_ frontdesk --tickets';
-        } elseif ($currentPage === 'profile') { $badgeCmd = 'sh_ user --profile'; } } ?>
-        -->
         <div class="hidden md:flex items-center bg-slate-800 border border-slate-700 rounded px-3 py-1
             text-[10px] font-mono text-slate-400">
             <?php echo sanitizeOutput($badgeCmd); ?>
         </div>
+    </div>
 
+    <!-- Right: nav links -->
     <div class="flex gap-6 items-center">
         <a href="<?php echo $siteUrl; ?>/index.php"
            class="text-xs font-bold uppercase tracking-widest <?php echo $currentPage === 'index' ? 'text-white' : 'text-slate-400 hover:text-white'; ?>">

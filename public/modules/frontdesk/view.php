@@ -24,10 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
 }
 
 $comments = getTicketMessages($ticketId);
-$pageTitle = "Ticket #" . $ticketId;
-$currentPage = 'ticketing';
-$isLoggedIn = true;
-include __DIR__ . '/../../../includes/header.php';
+$pageTitle = 'Ticket View';
+$currentPage = 'frontdesk';
+require_once __DIR__ . '/../../../includes/header.php';
+
 ?>
 
     <div class="container py-5">

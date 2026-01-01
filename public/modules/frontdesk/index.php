@@ -11,11 +11,9 @@ Auth::requireAuth();
 $user = Auth::getCurrentUser();
 $tickets = getUserTickets($user['id']);
 
-$pageTitle = "Support Tickets";
-$currentPage = 'ticketing';
-$isLoggedIn = true;
-
-include __DIR__ . '/../../../includes/header.php';
+$pageTitle = 'FrontDesk';
+$currentPage = 'frontdesk';
+require_once __DIR__ . '/../../../includes/header.php';
 ?>
 
 <div class="container py-5">
