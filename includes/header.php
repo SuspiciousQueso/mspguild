@@ -1,4 +1,7 @@
 <?php
+$pageTitle   = $pageTitle   ?? '';
+$currentPage = $currentPage ?? '';
+$isLoggedIn  = $isLoggedIn  ?? false;
 /**
  * MSPGuild Header
  */

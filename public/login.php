@@ -1,8 +1,12 @@
 <?php
+
+$isLoggedIn = \MSPGuild\Core\Auth::isLoggedIn();
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 use MSPGuild\Core\Auth;
-
+$pageTitle   = "Login";
+$currentPage = 'login';
+$isLoggedIn  = Auth::isLoggedIn();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
