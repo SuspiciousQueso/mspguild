@@ -173,7 +173,7 @@ TRAEFIK_LETSENCRYPT_EMAIL=<your_email>
 ```php
 // At top of protected pages:
 require_once __DIR__ . '/includes/bootstrap.php';
-Auth::requireAuth();  // Redirects to login if not authenticated
+Auth::Auth::requireAuth();  // Redirects to login if not authenticated
 $user = Auth::getCurrentUser();  // Get current user data
 ```
 

@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../../includes/modules/frontdesk/functions.php';
 use MSPGuild\Core\Auth;
 
 // Require login
-Auth::requireAuth();
+Auth::Auth::requireAuth();
 
 $user = Auth::getCurrentUser();
 $tickets = getUserTickets($user['id']);

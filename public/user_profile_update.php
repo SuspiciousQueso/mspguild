@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../src/Core/Auth.php';
 
 // Ensure the user is logged in
-requireAuth();
+Auth::requireAuth();
 
 $user = getCurrentUser();
 $error = '';
