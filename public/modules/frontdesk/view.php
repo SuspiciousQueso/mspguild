@@ -17,13 +17,13 @@ if (!$ticket) {
 // Handle new comments
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
     if (Auth::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-        addTicketComment($ticketId, $user['id'], $_POST['comment']);
+        addTicketMessage($ticketId, $user['id'], $_POST['comment']);
         header("Location: view.php?id=" . $ticketId);
         exit;
     }
 }
 
-$comments = getTicketComments($ticketId);
+$comments = getTicketMessages($ticketId);
 $pageTitle = "Ticket #" . $ticketId;
 $currentPage = 'ticketing';
 $isLoggedIn = true;
