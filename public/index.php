@@ -2,7 +2,13 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 require_once __DIR__ . '/../includes/bootstrap.php';
+
+use MSPGuild\Core\Auth;
+
 $pageTitle = "Welcome to MSPGuild";
+$currentPage = 'index';
+$isLoggedIn = Auth::isLoggedIn();
+
 include __DIR__ . '/../includes/header.php';
 ?>
 
@@ -12,11 +18,12 @@ include __DIR__ . '/../includes/header.php';
                 <h1 class="display-3 fw-bold text-primary mb-4">Your Command Center</h1>
                 <p class="lead mb-4">Self-hosted, modular, and built for technicians. Welcome to the MSPGuild Customer Portal.</p>
 
-                <?php if (isLoggedIn()): ?>
-                    <a href="dashboard.php" ...>Go to Dashboard</a>
+                <?php if ($isLoggedIn): ?>
+                    <a href="dashboard.php" class="btn btn-primary btn-lg">Go to Dashboard</a>
                 <?php else: ?>
-                    <a href="login.php" ...>Client Login</a>
+                    <a href="login.php" class="btn btn-outline-primary btn-lg">Client Login</a>
                 <?php endif; ?>
+            </div>
             
             <div class="col-lg-6">
                 <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=800" alt="Tech Dashboard" class="img-fluid rounded shadow-lg">
