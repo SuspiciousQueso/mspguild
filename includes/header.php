@@ -1,89 +1,105 @@
 <?php
+/**
+ * MSPGuild Header (OpsNerds-style, no Bootstrap)
+ *
+ * Expect pages to set:
+ *  - $pageTitle
+ *  - $currentPage
+ *  - $isLoggedIn (optional)
+ */
+
+// Safe defaults for template vars (keeps IDE happy too)
 $pageTitle   = $pageTitle   ?? '';
 $currentPage = $currentPage ?? '';
-$isLoggedIn  = $isLoggedIn  ?? false;
+$isLoggedIn  = $isLoggedIn  ?? (class_exists('\MSPGuild\Core\Auth') ? \MSPGuild\Core\Auth::isLoggedIn() : (isset($_SESSION['user_id'])));
+
+// Helpful URL fallbacks (won't fatal if constants aren't defined yet)
+$frontdeskUrl = defined('FRONTDESK_URL') ? FRONTDESK_URL : (defined('SITE_URL') ? SITE_URL . '/modules/frontdesk/index.php' : '/modules/frontdesk/index.php');
+$resumeUrl    = defined('RESUME_URL') ? RESUME_URL : '#';
+$siteName     = defined('SITE_NAME') ? SITE_NAME : 'MSPGuild';
+$tagline      = defined('SITE_TAGLINE') ? SITE_TAGLINE : '';
+$siteUrl      = defined('SITE_URL') ? SITE_URL : '';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo ($pageTitle ? sanitizeOutput($pageTitle) . ' - ' : ''); ?><?php echo SITE_NAME; ?></title>
-    <meta name="description" content="<?php echo SITE_TAGLINE; ?>">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/custom.css">
+    <!-- Tailwind (CDN like OpsNerds) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title><?php echo ($pageTitle ? sanitizeOutput($pageTitle) . ' - ' : ''); ?><?php echo sanitizeOutput($siteName); ?></title>
+    <meta name="description" content="<?php echo sanitizeOutput($tagline); ?>">
 </head>
-<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="<?php echo SITE_URL; ?>/index.php">
-            <i class="bi bi-shield-check"></i> <?php echo SITE_NAME; ?>
+<body class="h-full bg-slate-900 text-slate-200 flex flex-col m-0 p-0 overflow-hidden">
+
+<nav class="w-full bg-slate-900 px-6 py-3 flex justify-between items-center z-50 border-b border-slate-800 shrink-0">
+    <div class="flex items-center gap-6">
+        <a href="<?php echo $siteUrl; ?>/index.php"
+           class="text-2xl font-black tracking-tighter text-emerald-400 uppercase">
+            <?php echo sanitizeOutput($siteName); ?>
+        </a>// Badge logic (shell context)  if (!$isLoggedIn) { $badgeCmd = 'sh_ auth --login'; } else {
+        // Default when logged in $badgeCmd = 'sh_ dashboard --status';
+        // Optional: context-aware overrides if ($currentPage === 'frontdesk') { $badgeCmd = 'sh_ frontdesk --tickets';
+        } elseif ($currentPage === 'profile') { $badgeCmd = 'sh_ user --profile'; } } ?>
+
+        <div class="hidden md:flex items-center bg-slate-800 border border-slate-700 rounded px-3 py-1
+            text-[10px] font-mono text-slate-400">
+            <?php echo sanitizeOutput($badgeCmd); ?>
+        </div>
+
+    <div class="flex gap-6 items-center">
+        <a href="<?php echo $siteUrl; ?>/index.php"
+           class="text-xs font-bold uppercase tracking-widest <?php echo $currentPage === 'index' ? 'text-white' : 'text-slate-400 hover:text-white'; ?>">
+            Home
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a href="<?php echo $frontdeskUrl; ?>"
+           class="text-xs font-bold uppercase tracking-widest <?php echo $currentPage === 'frontdesk' ? 'text-white' : 'text-slate-400 hover:text-white'; ?>">
+            FrontDesk
+        </a>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <a href="<?php echo $siteUrl; ?>/contact.php"
+           class="text-xs font-bold uppercase tracking-widest <?php echo $currentPage === 'contact' ? 'text-white' : 'text-slate-400 hover:text-white'; ?>">
+            Contact
+        </a>
 
-                <li class="nav-item">
-                    <a class="nav-link <?php echo $currentPage === 'index' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/index.php">
-                        Home
-                    </a>
-                </li>
+        <a href="<?php echo $resumeUrl; ?>" target="_blank"
+           class="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white">
+            Resume
+        </a>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo defined('FRONTDESK_URL') ? FRONTDESK_URL : (SITE_URL . '/modules/frontdesk/index.php'); ?>">
-                        <i class="bi bi-inbox"></i> FrontDesk
-                    </a>
-                </li>
+        <div class="w-px h-5 bg-slate-800"></div>
 
-                <li class="nav-item">
-                    <a class="nav-link <?php echo $currentPage === 'contact' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/contact.php">
-                        Contact
-                    </a>
-                </li>
+        <?php if ($isLoggedIn): ?>
+            <a href="<?php echo $siteUrl; ?>/dashboard.php"
+               class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase px-4 py-2 rounded transition">
+                Dashboard
+            </a>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo defined('RESUME_URL') ? RESUME_URL : '#'; ?>" target="_blank">
-                        <i class="bi bi-file-earmark-person"></i> Resume
-                    </a>
-                </li>
+            <a href="<?php echo $siteUrl; ?>/user_profile_update.php"
+               class="text-[10px] text-slate-400 hover:text-white transition uppercase font-bold">
+                Profile
+            </a>
 
-                <?php if ($isLoggedIn): ?>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/dashboard.php">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'profile' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_profile_update.php">
-                            <i class="bi bi-person-circle"></i> Profile
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/logout.php">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </a>
-                    </li>
-                <?php else: ?>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'register' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/user_registration.php">
-                            <i class="bi bi-person-plus"></i> Register
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/login.php">
-                            <i class="bi bi-box-arrow-in-right"></i> Login
-                        </a>
-                    </li>
-                <?php endif; ?>
+            <a href="<?php echo $siteUrl; ?>/logout.php"
+               class="text-[10px] text-slate-500 hover:text-white transition uppercase font-bold">
+                Logout
+            </a>
+        <?php else: ?>
+            <a href="<?php echo $siteUrl; ?>/login.php"
+               class="text-xs font-bold hover:text-emerald-400 transition uppercase tracking-widest">
+                Login
+            </a>
 
-            </ul>
-        </div>
+            <a href="<?php echo $siteUrl; ?>/user_registration.php"
+               class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase px-4 py-2 rounded transition">
+                Join Guild
+            </a>
+        <?php endif; ?>
     </div>
 </nav>
+
+<main class="flex-1 overflow-auto">
