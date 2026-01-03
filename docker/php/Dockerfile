@@ -1,5 +1,6 @@
 # docker/php/Dockerfile
 FROM php:8.3-fpm
+RUN docker-php-ext-install pdo_mysql mysqli
 
 # set working dir
 WORKDIR /var/www/

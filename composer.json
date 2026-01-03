@@ -7,5 +7,7 @@
       "MSPGuild\\": "src/"
     }
   },
-  "require": {}
+  "require": {
+    "ext-pdo": "*"
+  }
 }
