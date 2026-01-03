@@ -1,8 +1,12 @@
 # docker/php/Dockerfile
 FROM php:8.3-fpm
-RUN apk add --no-cache $PHPIZE_DEPS mariadb-connector-c-dev \
- && docker-php-ext-install pdo_mysql mysqli \
- && apk del $PHPIZE_DEPS
+RUN set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+    default-mysql-client \
+  ; \
+  docker-php-ext-install pdo_mysql mysqli; \
+  rm -rf /var/lib/apt/lists/*
 
 # set working dir
 WORKDIR /var/www/
