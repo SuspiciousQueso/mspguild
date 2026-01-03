@@ -9,7 +9,7 @@ WORKDIR /var/www/
 # RUN composer install --no-dev --no-autoloader || true
 
 # permissions helper
-USER mspguild
+
 
 EXPOSE 9000
 CMD ["php-fpm"]
