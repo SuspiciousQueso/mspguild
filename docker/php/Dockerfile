@@ -9,8 +9,8 @@ WORKDIR /var/www/
 # RUN composer install --no-dev --no-autoloader || true
 
 # permissions helper
-RUN addgroup -g 1000 mspguild \
- && adduser -D -u 1000 -G mspguild mspguild
+RUN addgroup -g 1001 mspguild \
+ && adduser -D -u 1001 -G mspguild mspguild
 USER mspguild
 
 
