@@ -6,7 +6,7 @@
 // 1. Module Switches
 const ENABLE_TICKETING = true;
 const ENABLE_CRM = false;
-const ENABLE_RMM = false;
+const ENABLE_RMM = true;
 const ENABLE_INVOICING = false;
 
 // 2. Site Info (Updated to your production domain)
