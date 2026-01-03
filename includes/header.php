@@ -91,7 +91,7 @@ if (!$isLoggedIn) {
 
         <a href="<?php echo $resumeUrl; ?>" target="_blank"
            class="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white">
-            Resume
+            Support Services
         </a>
 
         <div class="w-px h-5 bg-slate-800"></div>

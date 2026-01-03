@@ -18,7 +18,7 @@ const SITE_TAGLINE = 'Where we find the way';
 
 // 3. Module URLs
 const KNOWLEDGE_BASE_URL = SITE_URL . '/kb/index.php';
-const RESUME_URL = '#';
+const RESUME_URL = 'https://baldwinit.tech/';
 
 const FRONTDESK_URL = SITE_URL . '/modules/frontdesk/index.php';
 
