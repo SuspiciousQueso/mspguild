@@ -1,5 +1,6 @@
 :80 {
-    root * /home/mspguild/mspguild/public
+    root * /var/www/mspguild/public
+
     encode zstd gzip
 
     php_fastcgi php:9000
