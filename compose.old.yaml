@@ -1,0 +1,178 @@
+# ============================================================
+#  MSPGuild Stack
+#  - Traefik (reverse proxy + Let's Encrypt)
+#  - Nginx (web server)
+#  - PHP-FPM (your app runs here)
+#  - MariaDB (database)
+#  - Adminer (database web UI)
+# ============================================================
+
+services:
+
+  # ------------------------------------------------------------
+  # TRAEFIK — Front-end reverse proxy and SSL manager
+  # ------------------------------------------------------------
+  traefik:
+    image: traefik:v2.10
+
+    # Traefik command flags
+    command:
+      # Enable Traefik dashboard (development only)
+      - "--api.insecure=true"
+
+      # Watch Docker labels to configure routers/services automatically
+      - "--providers.docker=true"
+
+      # HTTP entrypoint on port 80
+      - "--entrypoints.web.address=:80"
+
+      # HTTPS entrypoint on port 443
+      - "--entrypoints.websecure.address=:443"
+
+      # Use Let's Encrypt via TLS-ALPN challenge
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
+
+      # (Optional) Use HTTP-01 challenge instead of TLS-ALPN (uncomment to use)
+      # - "--certificatesresolvers.le.acme.httpchallenge=true"
+      # - "--certificatesresolvers.le.acme.httpchallenge.entrypoint=web"
+
+      # Email used for ACME registration
+      - "--certificatesresolvers.le.acme.email=${TRAEFIK_LETSENCRYPT_EMAIL}"
+
+      # Where Traefik stores your certs
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+
+    ports:
+      - "80:80"    # Public HTTP
+      - "443:443"  # Public HTTPS
+
+    volumes:
+      # Needed to read Docker labels
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      # Persistent storage for ACME certificates (bind-mount for easy inspection)
+      # On your VPS, run:
+      #   mkdir -p ./traefik-letsencrypt
+      #   touch ./traefik-letsencrypt/acme.json
+      #   chmod 600 ./traefik-letsencrypt/acme.json
+      - ./traefik-letsencrypt/acme.json:/letsencrypt/acme.json
+
+    networks:
+      - webnet
+
+    restart: unless-stopped
+
+
+  # ------------------------------------------------------------
+  # NGINX — Web server that serves your PHP application
+  # ------------------------------------------------------------
+  nginx:
+    image: nginx:stable
+
+    depends_on:
+      - php  # ensure PHP is ready before nginx starts
+
+    volumes:
+      # Your application code (mount public dir to match nginx root)
+      - ./public:/var/www/mspguild/public:delegated
+
+      # Nginx virtual host config
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+    labels:
+      # Tell Traefik to expose this container
+      - "traefik.enable=true"
+
+      # Route HTTPS traffic for these domains to nginx
+      - "traefik.http.routers.mspguild.rule=Host(`mspguild.tech`,`www.mspguild.tech`)"
+      - "traefik.http.routers.mspguild.entrypoints=websecure"
+
+      # Point Traefik to the nginx service on port 80
+      - "traefik.http.services.mspguild.loadbalancer.server.port=80"
+
+      # Use Let's Encrypt
+      - "traefik.http.routers.mspguild.tls.certresolver=le"
+      - "traefik.http.routers.mspguild.tls=true"
+
+    networks:
+      - webnet
+
+    restart: unless-stopped
+
+
+  # ------------------------------------------------------------
+  # PHP-FPM — Executes your PHP application
+  # ------------------------------------------------------------
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+
+    volumes:
+      # Mount the full project into PHP so it can include files outside `public`
+      - ./:/var/www/mspguild:delegated
+
+    networks:
+      - webnet
+
+
+  # ------------------------------------------------------------
+  # MARIADB — Primary database for your app
+  # ------------------------------------------------------------
+  db:
+    image: mariadb:11
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+    networks:
+      - webnet
+
+    # Healthcheck ensures db is ready before PHP connects
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    restart: unless-stopped
+
+
+  # ------------------------------------------------------------
+  # ADMINER — Web-based DB interface
+  # ------------------------------------------------------------
+  adminer:
+    image: adminer:latest
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`adminer.mspguild.tech`)"
+      - "traefik.http.routers.adminer.entrypoints=websecure"
+      - "traefik.http.routers.adminer.tls.certresolver=le"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+
+    networks:
+      - webnet
+
+    restart: unless-stopped
+
+
+# ------------------------------------------------------------
+# VOLUMES — Persistent storage
+# ------------------------------------------------------------
+volumes:
+  db_data:
+
+# ------------------------------------------------------------
+# NETWORKS — Internal Docker network
+# ------------------------------------------------------------
+networks:
+  webnet:
+    driver: bridge
+
