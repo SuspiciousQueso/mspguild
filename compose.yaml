@@ -6,7 +6,7 @@ services:
       - php
     ports:
       # Pick an unused port on the host; NPM will proxy to this.
-      - "80:80"
+      - "80"
     volumes:
       - ./:/var/www/mspguild:delegated
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
