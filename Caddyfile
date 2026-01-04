@@ -6,6 +6,7 @@
 
     php_fastcgi php:9000
     file_server
+    header X-Backend "mspguild-caddy"
 
     log {
             output stdout
