@@ -1,7 +1,8 @@
 :80 {
     root * /var/www/mspguild/public
-
     encode zstd gzip
+
+    try_files {path} {path}/index.php index.php
 
     php_fastcgi php:9000
     file_server
