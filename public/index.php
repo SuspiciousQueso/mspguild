@@ -140,7 +140,7 @@ include __DIR__ . '/../includes/header.php';
                 <div class="text-[10px] font-mono text-zinc-500 mb-2">ops://roadmap</div>
                 <div class="text-zinc-100 font-black tracking-tight">Planned Modules</div>
                 <ul class="text-sm text-zinc-400 mt-2 space-y-1">
-                    <li><span class="text-zinc-300 font-mono"><a href="https://jobs.mspguild.tech">OpsNerds</a> </span> — Job/gig board for operations</li>
+                    <li><span class="text-zinc-300 font-mono"><a href="https://ops.mspguild.tech">OpsNerds</a> </span> — Job/gig board for operations</li>
                     <li><span class="text-zinc-300 font-mono">RackRoom</span> — RMM</li>
                     <li><span class="text-zinc-300 font-mono">PatchDay</span> — patching, lifecycle</li>
                     <li><span class="text-zinc-300 font-mono">NightWatch</span> — Full Systems Monitoring</li>

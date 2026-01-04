@@ -40,6 +40,7 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - mspguild_internal
+      - db_admin_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
       interval: 10s
@@ -57,4 +58,7 @@ networks:
 
   # Your shared external network
   infrastructure_management_net:
+    external: true
+
+  db_admin_net:
     external: true
