@@ -1,26 +1,28 @@
 services:
-  php:
-    image: php:8.3-fpm
-    container_name: mspguild-php
-    working_dir: /var/www/mspguild
-    volumes:
-      - ./app:/var/www/mspguild
-    environment:
-      # optional, but useful for consistent behavior
-      APP_ENV: production
-    restart: unless-stopped
-
   caddy:
     image: caddy:2
     container_name: mspguild-caddy
     depends_on:
       - php
     ports:
-      # NPM will point to this (HTTP only)
+      # Pick an unused port on the host; NPM will proxy to this.
       - "8088:80"
     volumes:
-      - ./app:/var/www/mspguild
+      - ./:/var/www/mspguild:delegated
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      - infrastructure_management_net
+    restart: unless-stopped
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: mspguild-php
+    volumes:
+      - ./:/var/www/mspguild:delegated
+    networks:
+      - infrastructure_management_net
     restart: unless-stopped
 
   db:
@@ -33,7 +35,18 @@ services:
       MYSQL_PASSWORD: ${DB_PASS}
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - infrastructure_management_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
 volumes:
-  mspguild_db:
+  db_data:
+
+networks:
+  infrastructure_management_net:
+    external: true
