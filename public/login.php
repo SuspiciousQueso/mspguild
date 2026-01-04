@@ -119,12 +119,6 @@ include __DIR__ . '/../includes/header.php';
             </div>
         </div>
 
-        <div class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4 text-xs text-zinc-400">
-            <div class="font-mono text-zinc-500 mb-2">demo://account</div>
-            <div><span class="text-zinc-300">Email:</span> demo@example.com</div>
-            <div><span class="text-zinc-300">Password:</span> Demo123!</div>
-        </div>
-
     </div>
 </div>
 
