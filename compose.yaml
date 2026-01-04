@@ -11,7 +11,7 @@ services:
       - ./:/var/www/mspguild:delegated
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
     networks:
-      - webnet
+      - infrastructure_management_net
     restart: unless-stopped
 
   php:
@@ -22,7 +22,7 @@ services:
     volumes:
       - ./:/var/www/mspguild:delegated
     networks:
-      - webnet
+      - infrastructure_management_net
     restart: unless-stopped
 
   db:
@@ -36,7 +36,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - webnet
+      - infrastructure_management_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
       interval: 10s
@@ -48,5 +48,5 @@ volumes:
   db_data:
 
 networks:
-  webnet:
-    driver: bridge
+  infrastructure_management_net:
+    driver: external
