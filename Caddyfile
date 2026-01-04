@@ -4,7 +4,8 @@
 
     try_files {path} {path}/index.php index.php
 
-    php_fastcgi php:9000
+    php_fastcgi mspguild-php:9000
+
     file_server
     header X-Backend "mspguild-caddy"
 
