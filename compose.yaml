@@ -3,18 +3,21 @@ services:
     image: caddy:2
     container_name: mspguild-caddy
     depends_on:
-      - php
+      - mspguild-php
     ports:
-      # Pick an unused port on the host; NPM will proxy to this.
-      - "80"
+      # Pick a host port NPM will proxy to (example: 8087 -> container 80)
+      - "8087:80"
     volumes:
       - ./:/var/www/mspguild:delegated
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
     networks:
+      # Private app network for talking to php/db reliably
+      - mspguild_internal
+      # Shared infrastructure network so NPM can reach this container
       - infrastructure_management_net
     restart: unless-stopped
 
-  php:
+  mspguild-php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
@@ -22,10 +25,10 @@ services:
     volumes:
       - ./:/var/www/mspguild:delegated
     networks:
-      - infrastructure_management_net
+      - mspguild_internal
     restart: unless-stopped
 
-  db:
+  mspguild-db:
     image: mariadb:11
     container_name: mspguild-db
     environment:
@@ -36,7 +39,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - infrastructure_management_net
+      - mspguild_internal
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
       interval: 10s
@@ -48,5 +51,10 @@ volumes:
   db_data:
 
 networks:
+  # Private network just for this stack
+  mspguild_internal:
+    driver: bridge
+
+  # Your shared external network
   infrastructure_management_net:
     external: true
