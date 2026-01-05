@@ -50,8 +50,6 @@ volumes:
   db_data:
 
 networks:
-
-  # Your shared external network
   infrastructure_management_net:
     external: true
 
