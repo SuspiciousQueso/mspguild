@@ -7,23 +7,6 @@
  *  - $currentPage
  *  - $isLoggedIn (optional)
  */
-// Development notification banner - site wide
-if (!defined('DISABLE_DEV_BANNER')): ?>
-    <div x-data="{ open: true }" x-show="open"
-         class="w-full bg-slate-900 border-b border-slate-800 text-slate-300 text-xs md:text-sm">
-        <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-        <span>
-            <strong class="text-amber-400">Dev Notice:</strong>
-            This site is under active development. Features may break or reset.
-        </span>
-            <button @click="open = false"
-                    class="text-slate-500 hover:text-slate-300">
-                ✕
-            </button>
-        </div>
-    </div>
-
-<?php endif;
 // Safe defaults for template vars
 $pageTitle   = $pageTitle   ?? '';
 $currentPage = $currentPage ?? '';
@@ -61,6 +44,23 @@ if (!$isLoggedIn) {
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+<?php if (!defined('DISABLE_DEV_BANNER')): ?>
+    <div class="w-full bg-slate-900 border-b border-slate-800 text-slate-300 text-xs md:text-sm">
+        <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+            <span class="text-amber-400 font-semibold uppercase tracking-wide">
+                Dev Notice
+            </span>
+                <span class="hidden sm:inline">
+                This site is under active development. Some features may be incomplete or reset.
+            </span>
+                <span class="sm:hidden">
+                Active development in progress.
+            </span>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
