@@ -64,7 +64,7 @@ if (!$isLoggedIn) {
             <div class="flex items-center gap-2">
                 <span class="text-amber-400 font-semibold uppercase tracking-wide">Dev Notice</span>
                 <span class="hidden sm:inline">
-                This site is under active development. Some features may be incomplete or reset.
+                This site is under active development. Some features may be incomplete, and data reset or lost.
             </span>
                 <span class="sm:hidden">Active development in progress.</span>
             </div>
