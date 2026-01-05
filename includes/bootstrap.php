@@ -11,6 +11,7 @@ ini_set('display_startup_errors', 1);
 // Load the merged configuration
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/mail.php';
 
 // Use Composer autoloader if available, otherwise fallback to manual requires
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
@@ -20,6 +21,9 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../src/Core/Database.php';
     require_once __DIR__ . '/../src/Core/Auth.php';
     require_once __DIR__ . '/../src/Core/Session.php';
+    require_once __DIR__ . '/../src/Email/EmailTemplates.php';
+    require_once __DIR__ . '/../src/Services/Mailer.php';
+    require_once __DIR__ . '/../src/Services/PasswordReset.php';
 }
 // Load helper functions
 require_once __DIR__ . '/functions.php';

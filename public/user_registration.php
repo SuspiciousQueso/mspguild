@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 use MSPGuild\Core\Auth;
+use MSPGuild\Services\Mailer;
 
 $error   = '';
 $success = '';
@@ -42,6 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $userId = registerUser($userData);
             if ($userId) {
+
+                // Fire off a welcome email (best-effort; don't block registration if mail fails)
+                try {
+                    Mailer::send(\MSPGuild\Email\EmailTemplates::REGISTRATION, $form['email'], [
+                        'full_name' => $form['full_name'],
+                        'login_url' => (defined('SITE_URL') ? SITE_URL . '/login.php' : ''),
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('[Registration] Welcome email failed: ' . $e->getMessage());
+                }
+
                 $success = "Registration successful! You can now log in.";
             } else {
                 $error = "Registration failed. Email might already be in use.";

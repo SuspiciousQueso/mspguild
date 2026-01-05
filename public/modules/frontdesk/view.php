@@ -3,6 +3,8 @@ require_once __DIR__ . '/../../../includes/bootstrap.php';
 require_once __DIR__ . '/../../../includes/modules/frontdesk/functions.php';
 
 use MSPGuild\Core\Auth;
+use MSPGuild\Services\Mailer;
+use MSPGuild\Email\EmailTemplates;
 
 Auth::requireAuth();
 
@@ -21,6 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
         $comment = trim($_POST['comment'] ?? '');
         if ($comment !== '') {
             addTicketMessage($ticketId, (int)$user['id'], $comment);
+
+            // Best-effort update email to support (and optionally customer copy)
+            try {
+                $ticket = getTicketById((int)$ticketId, (int)$user['id']);
+                $ticketNumber = $ticket['ticket_number'] ?? ('#' . (int)$ticketId);
+                $ticketUrl = (defined('SITE_URL') ? SITE_URL : '') . '/modules/frontdesk/view.php?id=' . (int)$ticketId;
+
+                // Support gets notified on every update
+                if (defined('SUPPORT_EMAIL') && filter_var(SUPPORT_EMAIL, FILTER_VALIDATE_EMAIL)) {
+                    Mailer::send(EmailTemplates::TICKET_UPDATED, SUPPORT_EMAIL, [
+                        'full_name'      => $user['full_name'] ?? '',
+                        'ticket_id'      => (int)$ticketId,
+                        'ticket_number'  => $ticketNumber,
+                        'ticket_subject' => $ticket['subject'] ?? '',
+                        'ticket_url'     => $ticketUrl,
+                        'comment'        => $comment,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                error_log('[FrontDesk] Ticket update email failed: ' . $e->getMessage());
+            }
+
+
         }
         header("Location: view.php?id=" . $ticketId);
         exit;

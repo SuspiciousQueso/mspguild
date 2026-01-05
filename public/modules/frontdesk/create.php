@@ -3,6 +3,8 @@ require_once __DIR__ . '/../../../includes/bootstrap.php';
 require_once __DIR__ . '/../../../includes/modules/frontdesk/functions.php';
 
 use MSPGuild\Core\Auth;
+use MSPGuild\Services\Mailer;
+use MSPGuild\Email\EmailTemplates;
 
 Auth::requireAuth();
 
@@ -52,7 +54,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             if ($ticketId) {
-                header("Location: view.php?id=" . (int)$ticketId . "&created=1");
+                
+                // Best-effort email notifications (customer + support)
+                try {
+                    $ticket = getTicketById((int)$ticketId, (int)$user['id']);
+                    $ticketNumber = $ticket['ticket_number'] ?? ('#' . (int)$ticketId);
+                    $ticketUrl = (defined('SITE_URL') ? SITE_URL : '') . '/modules/frontdesk/view.php?id=' . (int)$ticketId;
+
+                    // Customer copy
+                    Mailer::send(EmailTemplates::TICKET_CREATED, $user['email'], [
+                        'full_name'      => $user['full_name'] ?? '',
+                        'ticket_id'      => (int)$ticketId,
+                        'ticket_number'  => $ticketNumber,
+                        'ticket_subject' => $ticket['subject'] ?? $form['subject'],
+                        'ticket_url'     => $ticketUrl,
+                        'priority'       => $ticket['priority'] ?? $form['priority'],
+                    ]);
+
+                    // Support copy
+                    if (defined('SUPPORT_EMAIL') && filter_var(SUPPORT_EMAIL, FILTER_VALIDATE_EMAIL)) {
+                        Mailer::send(EmailTemplates::TICKET_CREATED, SUPPORT_EMAIL, [
+                            'full_name'      => $user['full_name'] ?? '',
+                            'ticket_id'      => (int)$ticketId,
+                            'ticket_number'  => $ticketNumber,
+                            'ticket_subject' => $ticket['subject'] ?? $form['subject'],
+                            'ticket_url'     => $ticketUrl,
+                            'priority'       => $ticket['priority'] ?? $form['priority'],
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    error_log('[FrontDesk] Ticket created email failed: ' . $e->getMessage());
+                }
+
+header("Location: view.php?id=" . (int)$ticketId . "&created=1");
                 exit;
             }
 
