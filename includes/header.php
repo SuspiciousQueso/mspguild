@@ -44,6 +44,19 @@ if (!$isLoggedIn) {
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind (CDN like OpsNerds) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title><?php echo ($pageTitle ? sanitizeOutput($pageTitle) . ' - ' : ''); ?><?php echo sanitizeOutput($siteName); ?></title>
+    <meta name="description" content="<?php echo sanitizeOutput($tagline); ?>">
+</head>
+
+<body class="h-full bg-slate-900 text-slate-200 flex flex-col m-0 p-0 overflow-hidden">
 <?php if (!defined('DISABLE_DEV_BANNER')): ?>
     <div class="w-full bg-slate-900 border-b border-slate-800 text-slate-300 text-xs md:text-sm">
         <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
@@ -61,19 +74,6 @@ if (!$isLoggedIn) {
         </div>
     </div>
 <?php endif; ?>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Tailwind (CDN like OpsNerds) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <title><?php echo ($pageTitle ? sanitizeOutput($pageTitle) . ' - ' : ''); ?><?php echo sanitizeOutput($siteName); ?></title>
-    <meta name="description" content="<?php echo sanitizeOutput($tagline); ?>">
-</head>
-
-<body class="h-full bg-slate-900 text-slate-200 flex flex-col m-0 p-0 overflow-hidden">
-
 <nav class="w-full bg-slate-900 px-6 py-3 flex justify-between items-center z-50 border-b border-slate-800 shrink-0">
     <!-- Left -->
     <div class="flex items-center gap-6">
