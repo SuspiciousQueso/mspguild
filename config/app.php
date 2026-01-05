@@ -2,7 +2,8 @@
 /**
  * MSPGuild Global Configuration
  */
-
+// Define site development state toggle
+const DISABLE_DEV_BANNER = false;
 // 1. Module Switches
 const ENABLE_TICKETING = true;
 const ENABLE_CRM = false;
