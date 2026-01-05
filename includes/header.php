@@ -7,7 +7,7 @@
  *  - $currentPage
  *  - $isLoggedIn (optional)
  */
-include "../config/app.php";
+
 // Safe defaults for template vars
 $pageTitle   = $pageTitle   ?? '';
 $currentPage = $currentPage ?? '';
