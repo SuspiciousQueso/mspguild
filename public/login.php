@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             Auth::loginUser($user);
 
-            // Redirect to dashboard or the page they were trying to reach
+            // Redirect to the dashboard or the page they were trying to reach
             $redirect = $_SESSION['redirect_after_login'] ?? 'dashboard.php';
             unset($_SESSION['redirect_after_login']);
 
