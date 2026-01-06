@@ -24,7 +24,10 @@ services:
     volumes:
       - ./:/var/www/mspguild:delegated
     networks:
-      -
+      - infrastructure_management_net
+      - db_admin_net
+      - mspguild_internal
+
     restart: unless-stopped
 
   mspguild-db:
