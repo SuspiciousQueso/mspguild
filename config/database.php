@@ -4,7 +4,7 @@
  * Update these values to match your local/production environment
  */
 
-define('DB_HOST', getenv('DB_HOST') ?: 'mspguild_db');
+define('DB_HOST', getenv('DB_HOST') ?: 'mspguild-db');
 define('DB_NAME', getenv('DB_NAME') ?: 'mspguild');
 define('DB_USER', getenv('DB_USER') ?: 'mspguild');
 define('DB_PASS', getenv('DB_PASS') ?: 'SassyPeopleEatCheese');
