@@ -1,8 +1,7 @@
 # docker/php/Dockerfile
 FROM php:8.3-fpm
 RUN set -eux; \
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    default-mysql-client \
+RUN apt-get update && apt-get install -y \
     unzip \
     git \
     libzip-dev \
