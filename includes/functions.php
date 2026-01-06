@@ -24,6 +24,8 @@ function userEmailExists(string $email): bool
     $stmt->execute([trim($email)]);
     return (bool)$stmt->fetchColumn();
 }
+
+
 /**
  * Register a new user
  */
