@@ -68,12 +68,13 @@ CREATE TABLE ticket_messages (
      id INT AUTO_INCREMENT PRIMARY KEY,
 
      ticket_id INT NOT NULL,
-     user_id INT NULL,                -- nullable for system messages later
+     user_id INT NULL,
 
      body MEDIUMTEXT NOT NULL,
 
-     is_internal TINYINT(1) NOT NULL DEFAULT 0,
-     is_system   TINYINT(1) NOT NULL DEFAULT 0,
+     visibility ENUM('public', 'internal') NOT NULL DEFAULT 'public',
+
+     is_system TINYINT(1) NOT NULL DEFAULT 0,
 
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -86,5 +87,6 @@ CREATE TABLE ticket_messages (
              ON DELETE SET NULL,
 
      KEY idx_ticket_created (ticket_id, created_at),
-     KEY idx_user_created (user_id, created_at)
+     KEY idx_visibility (visibility)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
