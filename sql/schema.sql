@@ -64,19 +64,27 @@ CREATE TABLE IF NOT EXISTS tickets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Ticket comments for communication history
-CREATE TABLE IF NOT EXISTS ticket_comments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    ticket_id INT NOT NULL,
-    user_id INT NOT NULL,
-    comment TEXT NOT NULL,
-    is_internal BOOLEAN DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_ticket_id (ticket_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE ticket_messages (
+     id INT AUTO_INCREMENT PRIMARY KEY,
 
--- Insert a demo user (password: Demo123!)
--- This is for testing purposes only - remove in production
-INSERT INTO users (email, password_hash, full_name, company_name, contact_phone, service_tier) VALUES
-('demo@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Demo User', 'Example Corp', '(555) 123-4567', 'Professional');
+     ticket_id INT NOT NULL,
+     user_id INT NULL,                -- nullable for system messages later
+
+     body MEDIUMTEXT NOT NULL,
+
+     is_internal TINYINT(1) NOT NULL DEFAULT 0,
+     is_system   TINYINT(1) NOT NULL DEFAULT 0,
+
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+     CONSTRAINT fk_ticket_messages_ticket
+         FOREIGN KEY (ticket_id) REFERENCES tickets(id)
+             ON DELETE CASCADE,
+
+     CONSTRAINT fk_ticket_messages_user
+         FOREIGN KEY (user_id) REFERENCES users(id)
+             ON DELETE SET NULL,
+
+     KEY idx_ticket_created (ticket_id, created_at),
+     KEY idx_user_created (user_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

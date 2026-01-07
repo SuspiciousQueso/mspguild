@@ -127,10 +127,10 @@ WHERE queue_id IS NULL;
 
 -- ---------- USER QUEUE ACCESS ----------
 CREATE TABLE IF NOT EXISTS user_queue_access (
-                                                 user_id INT NOT NULL,
-                                                 queue_id INT NOT NULL,
-                                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                                 PRIMARY KEY (user_id, queue_id),
-    CONSTRAINT fk_uqa_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_uqa_queue FOREIGN KEY (queue_id) REFERENCES queues(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+     user_id INT NOT NULL,
+     queue_id INT NOT NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     PRIMARY KEY (user_id, queue_id),
+CONSTRAINT fk_uqa_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+CONSTRAINT fk_uqa_queue FOREIGN KEY (queue_id) REFERENCES queues(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
