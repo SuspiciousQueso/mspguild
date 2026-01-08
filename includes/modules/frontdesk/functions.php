@@ -96,9 +96,12 @@ function createTicket(int $userId, array $data)
 
 function getTicketMessages($ticketId) {
     $pdo = Database::getConnection();
-    $sql = "SELECT tm.*, u.full_name
+    $sql = "SELECT tm.id, tm.ticket_id, tm.user_id,
+               tm.body AS comment,
+               tm.created_at,
+               u.full_name
             FROM ticket_messages tm
-            JOIN users u ON tm.user_id = u.id
+            JOIN users u ON u.id = tm.user_id
             WHERE tm.ticket_id = ?
             ORDER BY tm.created_at ASC";
     $stmt = $pdo->prepare($sql);
