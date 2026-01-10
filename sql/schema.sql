@@ -49,46 +49,59 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tickets table for support requests
+-- Tickets table for support requests
 CREATE TABLE IF NOT EXISTS tickets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+                                       id INT AUTO_INCREMENT PRIMARY KEY,
+
+                                       user_id INT NOT NULL,
+
+    -- FrontDesk additions (code expects these)
+                                       site_id INT NULL,
+                                       ticket_type ENUM('R','I','B','Q') NOT NULL DEFAULT 'R',
+    -- R=Request, I=Incident, B=Billing, Q=Question (adjust if you want)
+
     subject VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
+
     status ENUM('open', 'in-progress', 'waiting-on-client', 'closed') DEFAULT 'open',
     priority ENUM('low', 'medium', 'high', 'emergency') DEFAULT 'medium',
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_tickets_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
     INDEX idx_user_id (user_id),
-    INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+    INDEX idx_site_id (site_id),
+    INDEX idx_status (status),
+    INDEX idx_type (ticket_type)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Ticket comments for communication history
-CREATE TABLE ticket_messages (
-     id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS ticket_messages (
+                                               id INT AUTO_INCREMENT PRIMARY KEY,
 
-     ticket_id INT NOT NULL,
-     user_id INT NULL,
+                                               ticket_id INT NOT NULL,
+                                               user_id INT NULL,
 
-     body MEDIUMTEXT NOT NULL,
+                                               body MEDIUMTEXT NOT NULL,
 
-     visibility ENUM('public', 'internal') NOT NULL DEFAULT 'public',
+                                               visibility ENUM('public', 'internal') NOT NULL DEFAULT 'public',
+    is_system TINYINT(1) NOT NULL DEFAULT 0,
 
-     is_system TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_ticket_messages_ticket
+    FOREIGN KEY (ticket_id) REFERENCES tickets(id)
+    ON DELETE CASCADE,
 
-     CONSTRAINT fk_ticket_messages_ticket
-         FOREIGN KEY (ticket_id) REFERENCES tickets(id)
-             ON DELETE CASCADE,
+    CONSTRAINT fk_ticket_messages_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE SET NULL,
 
-     CONSTRAINT fk_ticket_messages_user
-         FOREIGN KEY (user_id) REFERENCES users(id)
-             ON DELETE SET NULL,
-
-     KEY idx_ticket_created (ticket_id, created_at),
-     KEY idx_visibility (visibility)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    KEY idx_ticket_created (ticket_id, created_at),
+    KEY idx_visibility (visibility)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Password reset tokens
 -- Add this to your DB if you want forgot-password support.
@@ -132,9 +145,9 @@ VALUES (1, 'GUILD', 'Home Guild')
 
 -- ---------- QUEUES ----------
 CREATE TABLE IF NOT EXISTS queues (
-                                      id INT AUTO_INCREMENT PRIMARY KEY,
-                                      site_id INT NOT NULL,
-                                      name VARCHAR(255) NOT NULL,
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      site_id INT NOT NULL,
+      name VARCHAR(255) NOT NULL,
     slug VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_site_slug (site_id, slug),
@@ -239,10 +252,10 @@ WHERE queue_id IS NULL;
 
 -- ---------- USER QUEUE ACCESS ----------
 CREATE TABLE IF NOT EXISTS user_queue_access (
-                                                 user_id INT NOT NULL,
-                                                 queue_id INT NOT NULL,
-                                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                                 PRIMARY KEY (user_id, queue_id),
+     user_id INT NOT NULL,
+     queue_id INT NOT NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     PRIMARY KEY (user_id, queue_id),
     CONSTRAINT fk_uqa_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_uqa_queue FOREIGN KEY (queue_id) REFERENCES queues(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
