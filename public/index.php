@@ -117,8 +117,8 @@ include __DIR__ . '/../includes/header.php';
                     Track work without chaos.
                 </p>
                 <div class="mt-4">
-                    <a class="text-[11px] uppercase font-black text-emerald-400 hover:text-emerald-300"
-                       href="<?= htmlspecialchars($frontdeskUrl); ?>">
+                    <a class="text-[11px] uppercase font-black text-emerald-400 hover:text-emerald-300" target="_blank"
+                       href="<?= htmlspecialchars($frontdeskUrl); ?>>
                         open frontdesk →
                     </a>
                 </div>
